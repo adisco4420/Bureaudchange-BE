@@ -43,6 +43,7 @@
     "jsonwebtoken": "^8.4.0",
     "mailgun-js": "^0.22.0",
     "method-override": "^2.3.6",
+    "mjml": "^4.5.1",
     "mongoose": "^5.4.10",
     "mongoose-encryption": "^2.0.2",
     "morgan": "^1.9.1",
