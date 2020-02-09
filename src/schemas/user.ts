@@ -21,6 +21,10 @@ export let UserSchema: Schema = new Schema({
         required: true,
         select: false
         },
+    phoneNumber: {
+        type: Number,
+        required: true
+    },
     isVerified: {
         type: Boolean, 
         default: false

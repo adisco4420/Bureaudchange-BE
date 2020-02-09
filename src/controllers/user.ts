@@ -3,9 +3,9 @@ import { BaseService } from "../services/base";
 import { BasicResponse } from "../dtos/outputs/basicresponse";
 import { Status } from '../dtos/enums/statusenums';
 import { NextFunction, Request, Response } from "express";
-import { hashSync } from 'bcrypt-nodejs'
+import { compareSync, hashSync } from 'bcrypt-nodejs'
 import UserModel from '../schemas/user'
-
+ 
 export class UserController extends BaseService {
 
     public async Register(req: Request, res: Response, next: NextFunction) {
@@ -22,6 +22,25 @@ export class UserController extends BaseService {
             } else {
                 this.sendResponse(new BasicResponse(Status.ERROR, error), req, res);
             }            
+        }
+    }
+    public async Login(req: Request, res: Response, next: NextFunction) {        
+        try {        
+            const user: any = await UserModel.findOne({email: req.body.email}, '+password');
+            let responseObj = null
+              if (!user) {
+                 responseObj = new BasicResponse(Status.FAILED_VALIDATION, {msg:'Invalid Credentials'});
+              } else {
+                  const isValidPassword =  compareSync(req.body.password, user.password)
+                  if (!isValidPassword){                  
+                     responseObj = new BasicResponse(Status.FAILED_VALIDATION, {msg:'Invalid Credentials'});
+                  } else {
+                     responseObj = new BasicResponse(Status.SUCCESS, {msg:'User Login', data: user});
+                }
+            }          
+            this.sendResponse(responseObj, req, res);
+        } catch (error) {
+            this.sendResponse(new BasicResponse(Status.ERROR, error), req, res);           
         }
     }
     

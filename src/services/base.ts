@@ -28,9 +28,7 @@ export class BaseService {
 
     }
 
-    public sendResponse(serviceResponse: BasicResponse, req: Request, res: Response): any {
-        // console.log(serviceResponse);
-        
+    public sendResponse(serviceResponse: BasicResponse, req: Request, res: Response): any {        
         var response = {
             status: serviceResponse.getStatusString(),
             data: serviceResponse.getData()
