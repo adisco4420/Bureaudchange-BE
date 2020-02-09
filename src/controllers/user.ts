@@ -4,7 +4,8 @@ import { BasicResponse } from "../dtos/outputs/basicresponse";
 import { Status } from '../dtos/enums/statusenums';
 import { NextFunction, Request, Response } from "express";
 import { compareSync, hashSync } from 'bcrypt-nodejs'
-import UserModel from '../schemas/user'
+import UserModel from '../schemas/user';
+import Email from '../services/email';
  
 export class UserController extends BaseService {
 
@@ -13,6 +14,7 @@ export class UserController extends BaseService {
             req.body.password = hashSync(req.body.password)
             await UserModel.create({...req.body})
             let responseObj = new BasicResponse(Status.CREATED, {msg:'Your account is ready'});
+            Email.send()
             //this.sendMail(req, res, next, dto.email, output.token, dto.baseUrl, "confirmation")          
              this.sendResponse(responseObj, req, res);
         } catch (error) {
