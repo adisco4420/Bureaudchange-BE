@@ -1,18 +1,24 @@
-import env from '../environment/env'
-const mailgun = require('mailgun-js')({apiKey: env.MAILGUN_KEY, domain: 'app.notchcx.com'})
+import env from '../environment/env';
+const mailgun = require('mailgun-js')({apiKey: env.MAILGUN_KEY, domain: 'app.multicryptominetrade.com'});
+import * as mjml2html from 'mjml'
+
 
 class Email {
-
-    send() {
+    private companyName = 'Bureaudchange'
+    send(emailType: string, payload: {email?: string, token: string, firstName: string}) {
+        console.log(payload);
+        
         const data = {
             from: 'Bureaudchange <admin@Bureaudchange.com>',
-            to: 'elizoak@yahoo.com',
+            to: payload.email,
             subject: 'Verify Email Address',
-            html: this.getHtmlTemplate()
+            text: 'This is a test email',
+            html: this.getHtmlTemplate({}, payload)
           };
           mailgun.messages().send(data, (error, body) => {
-              
               if(error) {
+                  console.log(body);
+                   
                   return body
                 } else { 
                     console.log(body);
@@ -20,66 +26,33 @@ class Email {
             }
           });
     }
-    getHtmlTemplate() {
-        return `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-        <html xmlns="http://www.w3.org/1999/xhtml">
-        <head>
-        <meta name="viewport" content="width=device-width" />
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-        <title>Actionable emails e.g. reset password</title>
-        <link href="https://res.cloudinary.com/dx5bcp5ps/raw/upload/v1581213904/public/css/style_w0pqpr.css" media="all" rel="stylesheet" type="text/css" />
-        </head>
-        
-        <body itemscope itemtype="http://schema.org/EmailMessage">
-        
-        <table class="body-wrap">
-            <tr>
-                <td></td>
-                <td class="container" width="600">
-                    <div class="content">
-                        <table class="main" width="100%" cellpadding="0" cellspacing="0" itemprop="action" itemscope itemtype="http://schema.org/ConfirmAction">
-                            <tr>
-                                <td class="content-wrap">
-                                    <meta itemprop="name" content="Confirm Email"/>
-                                    <table width="100%" cellpadding="0" cellspacing="0">
-                                        <tr>
-                                            <td class="content-block">
-                                                Please confirm your email address by clicking the link below.
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td class="content-block">
-                                                We may need to send you critical information about our service and it is important that we have an accurate email address.
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td class="content-block" itemprop="handler" itemscope itemtype="http://schema.org/HttpActionHandler">
-                                                <a href="http://www.mailgun.com" class="btn-primary" itemprop="url">Confirm email address</a>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td class="content-block">
-                                                &mdash; The Mailgunners
-                                            </td>
-                                        </tr>
-                                    </table>
-                                </td>
-                            </tr>
-                        </table>
-                        <div class="footer">
-                            <table width="100%">
-                                <tr>
-                                    <td class="aligncenter content-block">Follow <a href="http://twitter.com/mail_gun">@Mail_Gun</a> on Twitter.</td>
-                                </tr>
-                            </table>
-                        </div></div>
-                </td>
-                <td></td>
-            </tr>
-        </table>
-        
-        </body>
-        </html>`
+    getHtmlTemplate(options: object, paylaod?: {firstName: string, token: string}) {
+        const htmlOutput = mjml2html(`
+        <mjml>
+        <mj-body background-color="#ffffff" font-size="13px">
+          <mj-section background-color="#009FE3" vertical-align="top" padding-bottom="0px" padding-top="0">
+            <mj-column vertical-align="top" width="100%">
+              <mj-text align="center" color="#ffffff" font-size="40px"  font-family="open Sans Helvetica, Arial, sans-serif" padding-left="25px" padding-right="25px" padding-bottom="30px" padding-top="50px">
+                ${this.companyName}
+              </mj-text>
+            </mj-column>
+          </mj-section>
+          <mj-section background-color="#009fe3" padding-bottom="20px" padding-top="20px">
+            <mj-column vertical-align="middle" width="100%">
+              <mj-text align="left" color="#ffffff" font-size="22px" font-family="open Sans Helvetica, Arial, sans-serif" padding-left="25px" padding-right="25px"><span style="color:#FEEB35">
+                Hello ${paylaod.firstName}</span><br /><br /> Welcome to ${this.companyName}.</mj-text>
+              <mj-text align="left" color="#ffffff" font-size="15px" font-family="open Sans Helvetica, Arial, sans-serif" padding-left="25px" padding-right="25px">
+               Thanks for joining ${this.companyName}, please confirm that your email addrress is correct to continue, 
+               click the link below to get started
+              </mj-text>
+              <mj-button align="left" href="https://bureaudchange.com/?token=${paylaod.token}" font-size="22px" font-weight="bold" background-color="#ffffff" border-radius="10px" color="#1AA0E1" font-family="open Sans Helvetica, Arial, sans-serif">Confirm Email</mj-button>
+              <mj-text align="left" color="#ffffff" font-size="15px" font-family="open Sans Helvetica, Arial, sans-serif" padding-left="25px" padding-right="25px">Thanks, <br /> The ${this.companyName} Team</mj-text>
+            </mj-column>
+          </mj-section>
+        </mj-body>
+      </mjml>
+      `, options);      
+      return htmlOutput.html
     }
 
 }

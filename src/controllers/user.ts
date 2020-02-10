@@ -6,16 +6,20 @@ import { NextFunction, Request, Response } from "express";
 import { compareSync, hashSync } from 'bcrypt-nodejs'
 import UserModel from '../schemas/user';
 import Email from '../services/email';
+import * as jwt from 'jsonwebtoken';
+import env from '../environment/env'
  
 export class UserController extends BaseService {
 
     public async Register(req: Request, res: Response, next: NextFunction) {
-        try {        
+        try {       
+            // console.log('baseurl=',req.baseUrl);
+              
             req.body.password = hashSync(req.body.password)
-            await UserModel.create({...req.body})
+            const user: any = await UserModel.create({...req.body})
             let responseObj = new BasicResponse(Status.CREATED, {msg:'Your account is ready'});
-            Email.send()
-            //this.sendMail(req, res, next, dto.email, output.token, dto.baseUrl, "confirmation")          
+            const token = jwt.sign({id: user._id}, env.JWT_KEY, {expiresIn: '1h'});
+            Email.send('confirm', {...user.toJSON(), token, })
              this.sendResponse(responseObj, req, res);
         } catch (error) {
             if(error.code === 11000) {
