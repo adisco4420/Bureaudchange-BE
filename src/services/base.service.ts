@@ -55,6 +55,8 @@ export class BaseService {
                 return 204;
             case 'FAILED_VALIDATION':
                 return 400;
+            case 'UN_AUTHORIZED':
+                return 401;
             case 'NOT_FOUND':
                 return 404;
             case 'CONFLICT':

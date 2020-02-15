@@ -4,6 +4,7 @@ export enum Status {
     SUCCESS,
     CREATED,
     FAILED_VALIDATION,
+    UN_AUTHORIZED,
     ERROR,
     NOT_FOUND,
     PRECONDITION_FAILED,

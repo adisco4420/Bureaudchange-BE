@@ -8,7 +8,7 @@ import UserModel from '../models/user.model';
 import EmailService from '../services/email.service';
 import TokenService from '../services/token.service'
  
-export class UserController extends BaseService {
+class UserController extends BaseService {
 
     public async Register(req: Request, res: Response, next: NextFunction) {
         try {       
@@ -39,7 +39,11 @@ export class UserController extends BaseService {
                   if (!isValidPassword){                  
                      responseObj = new BasicResponse(Status.FAILED_VALIDATION, {msg:'Invalid Credentials'});
                   } else {
-                     responseObj = new BasicResponse(Status.SUCCESS, {msg:'User Login', data: user});
+                     if(!user.isVerified) {
+                         responseObj = new BasicResponse(Status.UNPROCESSABLE_ENTRY, {msg:'Account is not verified'});
+                        } else {
+                            responseObj = new BasicResponse(Status.SUCCESS, {msg:'User Login', data: user});
+                     }
                 }
             }          
             this.sendResponse(responseObj, req, res);
@@ -47,5 +51,42 @@ export class UserController extends BaseService {
             this.sendResponse(new BasicResponse(Status.ERROR, error), req, res);           
         }
     }
+    public async Confirm(req: Request, res: Response) {
+        try {            
+            const updateUser = await UserModel.findByIdAndUpdate(req.user.id, {isVerified: true}, { new: true});
+            let responseObj = null;
+            if(!updateUser) {
+                responseObj =  new BasicResponse(Status.UNPROCESSABLE_ENTRY,{ msg: 'User not found'});
+            } else {
+                const tokenData = TokenService.sign(updateUser.toJSON(), '12h');
+                responseObj = new BasicResponse(Status.SUCCESS, {msg:'User Confirmed', data: tokenData})
+            }
+            this.sendResponse(responseObj, req, res);
+        } catch (error) {            
+            this.sendResponse(new BasicResponse(Status.ERROR, error), req, res);  
+        }
+    }
+
+    public async ResendEmail(req: Request, res: Response) {
+        try {
+            let responseObj = null;
+            const user: any = await UserModel.findOne({email: req.body.email})
+            if (!user) {
+                responseObj =  new BasicResponse(Status.UNPROCESSABLE_ENTRY,{ msg: 'User not found'});
+            } else {
+                if (user.isVerified) {
+                    responseObj =  new BasicResponse(Status.SUCCESS,{ msg: 'You are already verified'});
+                } else {
+                    const token = TokenService.sign({id: user.id}, '1h');
+                    EmailService.send('confirm', {...user.toJSON(), token, });
+                    responseObj =  new BasicResponse(Status.SUCCESS,{ msg: 'Verification message has been sented'});
+                }
+            }
+            this.sendResponse(responseObj, req, res);
+          } catch (error) {
+            this.sendResponse(new BasicResponse(Status.ERROR, error), req, res);  
+          }
+    }
     
  }
+ export default new UserController

@@ -77,9 +77,12 @@ export class Server {
     global.Promise = require("q").Promise;
     mongoose.Promise = global.Promise;
 
-    //connect to mongoose
+    //mongose => fix all deprecation warnings
     mongoose.set('useCreateIndex', true);
     mongoose.set('useNewUrlParser', true)
+    mongoose.set('useFindAndModify', false);
+    mongoose.set('useUnifiedTopology', true);
+
     // Connect to MongoDB
     mongoose.connect(env.MONGODB_URI)
     .then(() => {
@@ -117,7 +120,7 @@ export class Server {
     this.app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
     this.app.use('/',router);
     this.app.all('*', (req, res)=> {
-      return res.status(404).json({ status: 404, error: 'not found' });
+      return res.status(404).json({ status: 404, error: 'route not found' });
     });
   }
   

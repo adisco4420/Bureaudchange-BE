@@ -5,6 +5,7 @@ import * as mjml2html from 'mjml'
 
 class EmailService {
     private companyName = 'Bureaudchange'
+    private baseUrl = 'https://bureaudchange-1.firebaseapp.com'
     send(emailType: string, payload: {email?: string, token: string, firstName: string}) {        
         const data = {
             from: 'Bureaudchange <admin@Bureaudchange.com>',
@@ -24,7 +25,7 @@ class EmailService {
             }
           });
     }
-    getHtmlTemplate(options: object, paylaod?: {firstName: string, token: string}) {
+    private getHtmlTemplate(options: object, paylaod?: {firstName: string, token: string}) {
         const htmlOutput = mjml2html(`
         <mjml>
         <mj-body background-color="#ffffff" font-size="13px">
@@ -40,10 +41,10 @@ class EmailService {
               <mj-text align="left" color="#ffffff" font-size="22px" font-family="open Sans Helvetica, Arial, sans-serif" padding-left="25px" padding-right="25px"><span style="color:#FEEB35">
                 Hello ${paylaod.firstName}</span><br /><br /> Welcome to ${this.companyName}.</mj-text>
               <mj-text align="left" color="#ffffff" font-size="15px" font-family="open Sans Helvetica, Arial, sans-serif" padding-left="25px" padding-right="25px">
-               Thanks for joining ${this.companyName}, please confirm that your email addrress is correct to continue, 
+               Thanks for joining ${this.companyName}, please confirm that your email address is correct to continue, 
                click the link below to get started
               </mj-text>
-              <mj-button align="left" href="https://bureaudchange.com/?token=${paylaod.token}" font-size="22px" font-weight="bold" background-color="#ffffff" border-radius="10px" color="#1AA0E1" font-family="open Sans Helvetica, Arial, sans-serif">Confirm Email</mj-button>
+              <mj-button align="left" href="${this.baseUrl}/?token=${paylaod.token}" font-size="22px" font-weight="bold" background-color="#ffffff" border-radius="10px" color="#1AA0E1" font-family="open Sans Helvetica, Arial, sans-serif">Confirm Email</mj-button>
               <mj-text align="left" color="#ffffff" font-size="15px" font-family="open Sans Helvetica, Arial, sans-serif" padding-left="25px" padding-right="25px">Thanks, <br /> The ${this.companyName} Team</mj-text>
             </mj-column>
           </mj-section>
