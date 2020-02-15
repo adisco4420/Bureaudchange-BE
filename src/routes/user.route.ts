@@ -1,8 +1,8 @@
 import { NextFunction, Request, Response, Router } from "express";
-import { BaseController } from "../controllers/base";
-import { UserController} from '../controllers/user'
-import Joi from '../middlewares/validator';
-import UserVtor from '../validations/user'
+import { BaseController } from "../controllers/base.control";
+import { UserController} from '../controllers/user.control'
+import Joi from '../middlewares/validator.midware';
+import UserVtor from '../validations/user.validator'
 export class UserRoute extends BaseController {
   constructor() {
     super();

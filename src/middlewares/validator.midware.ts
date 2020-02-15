@@ -1,5 +1,5 @@
 import * as joi from 'joi'
-import { BaseService } from '../services/base'
+import { BaseService } from '../services/base.service'
 import { Status } from '../dtos/enums/statusenums';
 import { BasicResponse } from '../dtos/outputs/basicresponse';
 /**

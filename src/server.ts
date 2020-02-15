@@ -11,7 +11,7 @@ import chalk = require('chalk');
 import env from './environment/env';
 
 //routes
-import { UserRoute } from "./routes/user";
+import { UserRoute } from "./routes/user.route";
 
 /**
  * The server.
@@ -86,7 +86,7 @@ export class Server {
       console.log('✌🏾 Successfully connected to MongoDB');
     })
     .catch(err => {
-      console.log('An error occured while conencting to MongoDB', err);
+      console.log(chalk.default.red.bgBlack.bold('An error occured while conencting to MongoDB'));
     });
     // catch 404 and forward to error handler
     this.app.use(function(err: any, req: express.Request, res: express.Response, next: express.NextFunction) {

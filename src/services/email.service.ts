@@ -3,11 +3,9 @@ const mailgun = require('mailgun-js')({apiKey: env.MAILGUN_KEY, domain: 'app.mul
 import * as mjml2html from 'mjml'
 
 
-class Email {
+class EmailService {
     private companyName = 'Bureaudchange'
-    send(emailType: string, payload: {email?: string, token: string, firstName: string}) {
-        console.log(payload);
-        
+    send(emailType: string, payload: {email?: string, token: string, firstName: string}) {        
         const data = {
             from: 'Bureaudchange <admin@Bureaudchange.com>',
             to: payload.email,
@@ -54,6 +52,5 @@ class Email {
       `, options);      
       return htmlOutput.html
     }
-
 }
-export default new Email
+export default new EmailService
