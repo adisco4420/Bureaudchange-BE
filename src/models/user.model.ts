@@ -37,13 +37,15 @@ export let UserSchema: Schema = new Schema({
         type: Number,
     },
     pin: {
-        type: Number,
+        type: String,
+        minlength: 5,
+        maxlength: 5
     },
     wallet: [{
-        name: {type: String, default: 'Naira'},
+        name: {type: String, default: 'Naira', unique: true},
         balance: {type: Number, default: 0},
-        symbol: {type: String, default: 'NGN'},
-        sign: {type: String, default: '₦'}
+        symbol: {type: String, default: 'NGN', unique: true},
+        sign: {type: String, default: '₦', unique: true}
     }]
 });
 const UserModel = model('users', UserSchema)

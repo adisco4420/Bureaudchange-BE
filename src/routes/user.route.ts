@@ -14,6 +14,8 @@ export class UserRoute extends BaseController {
     this.initRegister(prefix, router);
     this.initConfirm(prefix, router);
     this.initResendEmail(prefix, router);
+    this.initWalletSetup(prefix, router);
+    this.initPinSetup(prefix, router);
     this.initLogin(prefix, router);
   }
     private initRegister(prefix: String, router: Router): any { 
@@ -29,6 +31,16 @@ export class UserRoute extends BaseController {
     private initResendEmail(prefix: String, router: Router): any { 
       router.post(prefix + "/resend-email", (req, res: Response) => {
         UserController.ResendEmail(req, res)
+      })
+    }
+    private initWalletSetup(prefix: String, router: Router): any { 
+      router.patch(prefix + "/wallet-setup", Joi.vdtor(UserVtor.WalletSetup), AuthMidWare, (req, res: Response) => {
+        UserController.WalletSetup(req, res)
+      })
+    }
+    private initPinSetup(prefix: String, router: Router): any { 
+      router.patch(prefix + "/pin-setup", Joi.vdtor(UserVtor.PinSetup), AuthMidWare, (req, res: Response) => {
+        UserController.PinSetup(req, res)
       })
     }
     private initLogin(prefix: String, router: Router): any { 

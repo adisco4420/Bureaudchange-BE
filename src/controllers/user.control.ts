@@ -42,7 +42,8 @@ class UserController extends BaseService {
                      if(!user.isVerified) {
                          responseObj = new BasicResponse(Status.UNPROCESSABLE_ENTRY, {msg:'Account is not verified'});
                         } else {
-                            responseObj = new BasicResponse(Status.SUCCESS, {msg:'User Login', data: user});
+                            const token = TokenService.sign(user.toJSON(), '12h')
+                            responseObj = new BasicResponse(Status.SUCCESS, {msg:'User Login', data: token});
                      }
                 }
             }          
@@ -66,7 +67,6 @@ class UserController extends BaseService {
             this.sendResponse(new BasicResponse(Status.ERROR, error), req, res);  
         }
     }
-
     public async ResendEmail(req: Request, res: Response) {
         try {
             let responseObj = null;
@@ -86,6 +86,42 @@ class UserController extends BaseService {
           } catch (error) {
             this.sendResponse(new BasicResponse(Status.ERROR, error), req, res);  
           }
+    }
+    public async WalletSetup(req: Request, res: Response) {
+        try {            
+            let responseObj = null;
+            const user = await UserModel.findOneAndUpdate({
+                    _id: req.user._id,
+                    'wallet.name': {$ne: req.body.name},
+                }, 
+                {
+                    $push: {
+                        wallet: {...req.body}
+                    }
+                }, {new: true})
+            if(user) {
+                responseObj =  new BasicResponse(Status.SUCCESS,{ msg: 'Wallet setup', data: user});
+            } else {
+                responseObj =  new BasicResponse(Status.UNPROCESSABLE_ENTRY,{ msg: 'User not found or Currency exist'});
+            }
+            this.sendResponse(responseObj, req, res);
+        } catch (error) {
+            this.sendResponse(new BasicResponse(Status.ERROR, error), req, res);  
+        }
+    }
+    public async PinSetup(req: Request, res: Response) {
+        try {
+            req.body.pin = hashSync(req.body.pin);
+            const user = await UserModel.findByIdAndUpdate(req.user._id, {pin: req.body.pin}, {new: true});
+            if(user) {
+                this.sendResponse(new BasicResponse(Status.SUCCESS, { msg: 'Pin setup', data: user}), req, res);
+            } else {
+                this.sendResponse(new BasicResponse(Status.UNPROCESSABLE_ENTRY, { msg: 'User not found', data: user}), req, res);
+            }
+        } catch (error) {
+            this.sendResponse(new BasicResponse(Status.ERROR, error), req, res);
+        }
+
     }
     
  }
