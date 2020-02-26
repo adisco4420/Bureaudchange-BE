@@ -73,14 +73,11 @@ export class Server {
     this.app.options("*", cors());
     this.app.use(cors());
 
-    //use q promises
-    global.Promise = require("q").Promise;
-    mongoose.Promise = global.Promise;
+    const mongoLocalUrl = ' mongodb://localhost:27017/bureaudchange'
 
-    //mongose => fix all deprecation warnings
+    // Mongose => fix all deprecation warnings
     mongoose.set('useCreateIndex', true);
     mongoose.set('useNewUrlParser', true)
-    mongoose.set('useFindAndModify', false);
     mongoose.set('useUnifiedTopology', true);
 
     // Connect to MongoDB
@@ -91,6 +88,10 @@ export class Server {
     .catch(err => {
       console.log(chalk.default.red.bgBlack.bold('An error occured while conencting to MongoDB'));
     });
+
+
+    // mongoose.set('useFindAndModify', false);
+    // mongoose.set('useUnifiedTopology', true);
     // catch 404 and forward to error handler
     this.app.use(function(err: any, req: express.Request, res: express.Response, next: express.NextFunction) {
         err.status = 404;

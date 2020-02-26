@@ -1,7 +1,7 @@
 
-import { Schema, model } from "mongoose";
+import * as mongoose from "mongoose";
 
-export let UserSchema: Schema = new Schema({
+export let UserSchema = new mongoose.Schema({
     firstName: {
         type: String,
         required: true
@@ -42,11 +42,11 @@ export let UserSchema: Schema = new Schema({
         maxlength: 5
     },
     wallet: [{
-        name: {type: String, default: 'Naira', unique: true},
+        name: {type: String, default: 'Naira'},
         balance: {type: Number, default: 0},
-        symbol: {type: String, default: 'NGN', unique: true},
-        sign: {type: String, default: '₦', unique: true}
-    }]
+        symbol: {type: String, default: 'NGN'},
+        sign: {type: String, default: '₦'}
+    }] 
 });
-const UserModel = model('users', UserSchema)
+const UserModel = mongoose.model('users', UserSchema)
 export default UserModel
