@@ -18,7 +18,8 @@ class UserController extends BaseService {
             const isUnique = await ModelHelper.unique(UserModel, {key: 'email', value: req.body.email});
             if(isUnique) {
                 const user: any = await UserModel.create({...req.body});
-                let responseObj = new BasicResponse(Status.CREATED, {msg:'Your account is ready'});
+                const msg = 'Your registration is successful, kindly verify your email address'
+                let responseObj = new BasicResponse(Status.CREATED, {msg});
                 const token = TokenService.sign({id: user._id}, '1h');                
                 EmailService.send('confirm', {...user.toJSON(), token, })
                 this.sendResponse(responseObj, req, res);
@@ -102,7 +103,7 @@ class UserController extends BaseService {
                     }
                 }, {new: true})
             if(user) {
-                responseObj =  new BasicResponse(Status.SUCCESS,{ msg: 'Wallet setup', data: user});
+                responseObj =  new BasicResponse(Status.SUCCESS,{ msg: 'Wallet Setup', data: []});
             } else {
                 responseObj =  new BasicResponse(Status.UNPROCESSABLE_ENTRY,{ msg: 'User not found or Currency exist'});
             }
@@ -116,7 +117,7 @@ class UserController extends BaseService {
             req.body.pin = hashSync(req.body.pin);
             const user = await UserModel.findByIdAndUpdate(req.user._id, {pin: req.body.pin}, {new: true});
             if(user) {
-                this.sendResponse(new BasicResponse(Status.SUCCESS, { msg: 'Pin setup', data: user}), req, res);
+                this.sendResponse(new BasicResponse(Status.SUCCESS, { msg: 'Pin setup', data: []}), req, res);
             } else {
                 this.sendResponse(new BasicResponse(Status.UNPROCESSABLE_ENTRY, { msg: 'User not found', data: user}), req, res);
             }
@@ -124,6 +125,19 @@ class UserController extends BaseService {
             this.sendResponse(new BasicResponse(Status.ERROR, error), req, res);
         }
 
+    }
+    public async Profile(req: Request, res: Response) {
+        try {
+            const user = await UserModel.findById(req.user._id);
+            if(user) {
+                const token = TokenService.sign(user.toJSON(), '12h');
+                this.sendResponse(new BasicResponse(Status.SUCCESS, { msg: 'User Profile', data: token}), req, res);
+            } else {
+                this.sendResponse(new BasicResponse(Status.UNPROCESSABLE_ENTRY, { msg: 'User not found', data: user}), req, res);
+            }
+        } catch (error) {
+            this.sendResponse(new BasicResponse(Status.ERROR, error), req, res);
+        }
     }
     
  }
