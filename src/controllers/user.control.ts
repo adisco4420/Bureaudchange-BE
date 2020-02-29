@@ -18,7 +18,8 @@ class UserController extends BaseService {
             const isUnique = await ModelHelper.unique(UserModel, {key: 'email', value: req.body.email});
             if(isUnique) {
                 const user: any = await UserModel.create({...req.body});
-                let responseObj = new BasicResponse(Status.CREATED, {msg:'Your account is ready'});
+                const msg = 'Your registration is successful, kindly verify your email address'
+                let responseObj = new BasicResponse(Status.CREATED, {msg});
                 const token = TokenService.sign({id: user._id}, '1h');                
                 EmailService.send('confirm', {...user.toJSON(), token, })
                 this.sendResponse(responseObj, req, res);
