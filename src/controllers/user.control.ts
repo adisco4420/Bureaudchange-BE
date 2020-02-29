@@ -103,7 +103,7 @@ class UserController extends BaseService {
                     }
                 }, {new: true})
             if(user) {
-                responseObj =  new BasicResponse(Status.SUCCESS,{ msg: 'Wallet setup', data: user});
+                responseObj =  new BasicResponse(Status.SUCCESS,{ msg: 'Wallet Setup', data: []});
             } else {
                 responseObj =  new BasicResponse(Status.UNPROCESSABLE_ENTRY,{ msg: 'User not found or Currency exist'});
             }
@@ -117,7 +117,7 @@ class UserController extends BaseService {
             req.body.pin = hashSync(req.body.pin);
             const user = await UserModel.findByIdAndUpdate(req.user._id, {pin: req.body.pin}, {new: true});
             if(user) {
-                this.sendResponse(new BasicResponse(Status.SUCCESS, { msg: 'Pin setup', data: user}), req, res);
+                this.sendResponse(new BasicResponse(Status.SUCCESS, { msg: 'Pin setup', data: []}), req, res);
             } else {
                 this.sendResponse(new BasicResponse(Status.UNPROCESSABLE_ENTRY, { msg: 'User not found', data: user}), req, res);
             }
@@ -125,6 +125,19 @@ class UserController extends BaseService {
             this.sendResponse(new BasicResponse(Status.ERROR, error), req, res);
         }
 
+    }
+    public async Profile(req: Request, res: Response) {
+        try {
+            const user = await UserModel.findById(req.user._id);
+            if(user) {
+                const token = TokenService.sign(user.toJSON(), '12h');
+                this.sendResponse(new BasicResponse(Status.SUCCESS, { msg: 'User Profile', data: token}), req, res);
+            } else {
+                this.sendResponse(new BasicResponse(Status.UNPROCESSABLE_ENTRY, { msg: 'User not found', data: user}), req, res);
+            }
+        } catch (error) {
+            this.sendResponse(new BasicResponse(Status.ERROR, error), req, res);
+        }
     }
     
  }
