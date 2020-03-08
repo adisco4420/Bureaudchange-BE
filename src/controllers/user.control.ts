@@ -20,18 +20,18 @@ class UserController extends BaseService {
                 const user: any = await UserModel.create({...req.body});
                 const msg = 'Your registration is successful, kindly verify your email address'
                 let responseObj = new BasicResponse(Status.CREATED, {msg});
-                const token = TokenService.sign({id: user._id}, '1h');                
-                EmailService.send('confirm', {...user.toJSON(), token, })
+                const token = TokenService.sign({id: user._id}, '5h');                
+                EmailService.send('confirm', {...user.toJSON(), token, baseUrl: req.body.baseUrl})
                 this.sendResponse(responseObj, req, res);
             } else {
-                const msg = `This email already exists (${req.body.email}) unique`
+                const msg = `This email already exists (${req.body.email})`
                 this.sendResponse(new BasicResponse(Status.FAILED_VALIDATION, {msg}), req, res);
             }
         } catch (error) {
             this.sendResponse(new BasicResponse(Status.ERROR, error), req, res);          
         }
     } 
-    public async Login(req: Request, res: Response, next: NextFunction) {        
+    public async Login(req: Request, res: Response, next: NextFunction) {    
         try {        
             const user: any = await UserModel.findOne({email: req.body.email}, '+password');
             let responseObj = null
@@ -45,7 +45,9 @@ class UserController extends BaseService {
                      if(!user.isVerified) {
                          responseObj = new BasicResponse(Status.UNPROCESSABLE_ENTRY, {msg:'Account is not verified'});
                         } else {
-                            const token = TokenService.sign(user.toJSON(), '12h')
+                            const newUser = user.toJSON();
+                            delete newUser['password'];
+                            const token = TokenService.sign(newUser, '12h')   
                             responseObj = new BasicResponse(Status.SUCCESS, {msg:'User Login', data: token});
                      }
                 }
@@ -57,8 +59,8 @@ class UserController extends BaseService {
     }
     public async Confirm(req: Request, res: Response) {
         try {            
-            const updateUser = await UserModel.findByIdAndUpdate(req.user.id, {isVerified: true}, { new: true});
-            let responseObj = null;
+            const updateUser = await UserModel.findByIdAndUpdate(req.user._id, {isVerified: true}, { new: true});
+            let responseObj = null;            
             if(!updateUser) {
                 responseObj =  new BasicResponse(Status.UNPROCESSABLE_ENTRY,{ msg: 'User not found'});
             } else {
@@ -130,8 +132,19 @@ class UserController extends BaseService {
         try {
             const user = await UserModel.findById(req.user._id);
             if(user) {
-                const token = TokenService.sign(user.toJSON(), '12h');
-                this.sendResponse(new BasicResponse(Status.SUCCESS, { msg: 'User Profile', data: token}), req, res);
+                this.sendResponse(new BasicResponse(Status.SUCCESS, { msg: 'User Profile', data: user}), req, res);
+            } else {
+                this.sendResponse(new BasicResponse(Status.UNPROCESSABLE_ENTRY, { msg: 'User not found', data: user}), req, res);
+            }
+        } catch (error) {
+            this.sendResponse(new BasicResponse(Status.ERROR, error), req, res);
+        }
+    }
+    public async WalletBalance(req: Request, res: Response) {
+        try {
+            const user = await UserModel.findById(req.user._id, {wallet: true});
+            if(user) {
+                this.sendResponse(new BasicResponse(Status.SUCCESS, { msg: 'User Profile', data: user}), req, res);
             } else {
                 this.sendResponse(new BasicResponse(Status.UNPROCESSABLE_ENTRY, { msg: 'User not found', data: user}), req, res);
             }

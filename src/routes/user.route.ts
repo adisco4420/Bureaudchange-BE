@@ -18,6 +18,7 @@ export class UserRoute extends BaseController {
     this.initPinSetup(prefix, router);
     this.initLogin(prefix, router);
     this.initProfile(prefix, router);
+    this.initWalletBalance(prefix, router);
   }
     private initRegister(prefix: String, router: Router): any { 
       router.post(prefix + "/register", Joi.vdtor(UserVtor.Register), (req, res: Response, next: NextFunction) => {
@@ -52,6 +53,11 @@ export class UserRoute extends BaseController {
     private initProfile(prefix: String, router: Router): any { 
       router.get(prefix + "/profile", AuthMidWare, (req, res: Response) => {
         UserController.Profile(req, res)
+      })
+    }
+    private initWalletBalance(prefix: String, router: Router): any { 
+      router.get(prefix + "/wallet-balance", AuthMidWare, (req, res: Response) => {
+        UserController.WalletBalance(req, res)
       })
     }
 
