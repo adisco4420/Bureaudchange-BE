@@ -6,7 +6,8 @@ class UserValidator {
         firstName: joi.string().required(),
         lastName: joi.string().required(),
         phoneNumber: joi.number().required(),
-        password: joi.required()
+        password: joi.string().required(),
+        baseUrl: joi.string().required()
     }
     public Login =  {
         email: joi.string().email({ minDomainSegments: 2 }).required(),

@@ -52,6 +52,7 @@
     "node-cron": "^1.2.1",
     "q": "^1.4.1",
     "qs": "^6.6.0",
+    "stripe": "^8.29.0",
     "swagger-ui-express": "^3.0.10",
     "typescript": "^2.9.2",
     "validator": "^10.11.0",

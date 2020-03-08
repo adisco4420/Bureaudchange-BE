@@ -5,17 +5,20 @@ import { BasicResponse } from '../dtos/outputs/basicresponse';
 
 class AuthMidWare extends BaseService {
     auth() {
-        return (req, res, next) => {
+        return (req, res, next) => {            
             try {
                 const authHeader = req.headers.authorization;
                 if(!authHeader) return this.sendResponse(new BasicResponse(Status.UN_AUTHORIZED, {msg:'Please specify authorization header'}), req, res);
                 const token = authHeader.split(' ')[1];
                 const tokenData = TokenService.verify(token);
-                req.user = tokenData;
-                next();
+                if(tokenData.isVerified || req.url.includes('/user/confirm-email')) {                    
+                    req.user = tokenData;
+                    next();
+                } else {
+                    return this.sendResponse(new BasicResponse(Status.UN_AUTHORIZED, {msg:'you are not authorized unverified'}), req, res)
+                }
             } catch (error) {
                return this.sendResponse(new BasicResponse(Status.UN_AUTHORIZED, {msg:'you are not authorized'}), req, res)
-        
             }
         }
     }

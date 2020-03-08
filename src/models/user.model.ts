@@ -35,18 +35,23 @@ export let UserSchema = new mongoose.Schema({
     },
     bvnNumber: {
         type: Number,
+        select: false
     },
     pin: {
         type: String,
         minlength: 5,
-        maxlength: 5
+        maxlength: 5, 
+        select: false
     },
-    wallet: [{
-        name: {type: String, default: 'Naira'},
-        balance: {type: Number, default: 0},
-        symbol: {type: String, default: 'NGN'},
-        sign: {type: String, default: '₦'}
-    }] 
+    wallet: {
+        type: [{
+            name: {type: String, default: 'Naira'},
+            balance: {type: Number, default: 0},
+            symbol: {type: String, default: 'NGN'},
+            sign: {type: String, default: '₦'},
+        }],
+        select: false
+    }
 });
 const UserModel = mongoose.model('users', UserSchema)
 export default UserModel
