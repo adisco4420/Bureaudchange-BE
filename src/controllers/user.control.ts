@@ -59,7 +59,7 @@ class UserController extends BaseService {
     }
     public async Confirm(req: Request, res: Response) {
         try {            
-            const updateUser = await UserModel.findByIdAndUpdate(req.user._id, {isVerified: true}, { new: true});
+            const updateUser = await UserModel.findByIdAndUpdate(req.user.id, {isVerified: true}, { new: true});
             let responseObj = null;            
             if(!updateUser) {
                 responseObj =  new BasicResponse(Status.UNPROCESSABLE_ENTRY,{ msg: 'User not found'});
