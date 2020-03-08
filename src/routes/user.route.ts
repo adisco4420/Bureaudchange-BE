@@ -26,7 +26,7 @@ export class UserRoute extends BaseController {
       })
     }
     private initConfirm(prefix: String, router: Router): any { 
-      router.get(prefix + "/comfirm-email", AuthMidWare, (req, res: Response) => {
+      router.get(prefix + "/confirm-email", AuthMidWare, (req, res: Response) => {
         UserController.Confirm(req, res)
       })
     }
