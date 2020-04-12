@@ -50,5 +50,25 @@ class FundWalletController extends BaseService {
             this.sendResponse(new BasicResponse(Status.ERROR, error), req, res);   
         }
     }
+    public async FlutterwaveWebhook(req: Request, res: Response) {
+        var hash = req.headers["verif-hash"];
+        if(!hash) return;
+        if(hash!==env.flutterwaveSecretHash) return;
+        const { status, customer, currency , charged_amount} = req.body;
+        if(status !== 'successful') return;
+
+        const result = await UserModel.findOneAndUpdate(
+            { email: customer.email, 'wallet.symbol': {$eq:currency.toUpperCase()}}, 
+            { $inc: {'wallet.$.balance': charged_amount}}
+        )
+        console.log(result);
+        res.send(200);
+
+
+        // Give value to your customer but don't give any output
+        // Remember that this is a call from rave's servers and 
+        // Your customer is not seeing the response here at all
+
+    }
 }
 export default new FundWalletController;

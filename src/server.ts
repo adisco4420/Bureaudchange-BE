@@ -12,7 +12,8 @@ import env from './environment/env';
 
 //routes
 import { UserRoute } from "./routes/user.route";
-import fundWalletRoute from "./routes/fund-wallet.route";
+import FundWalletRoute from "./routes/fund-wallet.route";
+import CunRateRoute from "./routes/currency-rate.route";
 
 /**
  * The server.
@@ -120,14 +121,19 @@ export class Server {
     console.log(chalk.default.yellow.bgBlack.bold("Loading user controller routes"));
     new UserRoute().loadRoutes('/user', router);
     console.log(chalk.default.yellow.bgBlack.bold("Loading fund wallet routes"));
-    fundWalletRoute.loadRoutes('/fund-wallet', router)
+    FundWalletRoute.loadRoutes('/fund-wallet', router)
+    console.log(chalk.default.yellow.bgBlack.bold("Loading currency rates routes"));
+    CunRateRoute.loadRoutes('/cun-rate', router)
 
     //use router middleware
     this.app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
     this.app.use('/',router);
+    this.app.get('/', (req, res) => {
+      return res.send('Welcome to Xchange Api');
+    })
     this.app.all('*', (req, res)=> {
       return res.status(404).json({ status: 404, error: 'route not found' });
     });
   }
-  
+   
 }

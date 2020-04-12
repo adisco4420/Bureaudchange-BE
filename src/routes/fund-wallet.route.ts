@@ -9,6 +9,7 @@ class FundWalletRoute {
     public loadRoutes(prefix: String, router: Router) {
         this.getStripeSessionId(prefix, router)
         this.stripeSesWebhook(prefix, router);
+        this.flutterwaveWebhook(prefix, router);
     }
 
     private getStripeSessionId(prefix: String, router: Router) {
@@ -20,6 +21,11 @@ class FundWalletRoute {
     private stripeSesWebhook(prefix: String, router: Router) {
         router.post(prefix + '/stripe-session-webhook', (req: Request, res: Response) => {
             FndWltController.StripeSesWebHook(req, res)
+        })
+    }
+    private flutterwaveWebhook(prefix: String, router: Router) {
+        router.post(prefix + '/flutterwave-webhook', (req: Request, res: Response) => {
+            FndWltController.FlutterwaveWebhook(req, res)
         })
     }
 }

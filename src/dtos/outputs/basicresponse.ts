@@ -1,11 +1,17 @@
 import { Status } from "../enums/statusenums";
+import { Document } from "mongoose";
+
+interface DataI {
+    msg?: string;
+    data?:  Document | any[] | string
+}
 
 export class BasicResponse {
 
     private status: number;
     private data: object;
 
-    constructor(status: number, data ?: object){
+    constructor(status: number, data ?: DataI){
         this.status = status;
         this.data = data;        
     }
