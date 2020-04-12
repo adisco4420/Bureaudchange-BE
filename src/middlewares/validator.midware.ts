@@ -17,7 +17,7 @@ export class Joi extends BaseService {
           } catch (err) {              
             const errorDetails = err.details.map(e => e.message);
             const response = {
-              message: 'Some validation errors occured',
+              msg: 'Some validation errors occured',
               errors: errorDetails,
             }   
            return this.sendResponse(new BasicResponse(Status.ERROR, response), req, res)
