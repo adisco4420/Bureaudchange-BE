@@ -5,7 +5,7 @@
   "private": true,
   "author": "Sodiq Alabi",
   "scripts": {
-    "dev": "NODE_ENV=dev nodemon ./bin/www",
+    "dev": "nodemon ./bin/www",
     "staging": "NODE_ENV=dev node ./bin/www",
     "grunt": "grunt",
     "build": "npm run grunt prod",

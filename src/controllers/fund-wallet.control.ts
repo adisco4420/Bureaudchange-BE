@@ -5,6 +5,7 @@ import { NextFunction, Request, Response } from "express";
 import env from '../environment/env';
 import UserModel from '../models/user.model';
 import WalletSrv from '../services/wallet.service';
+import UserControl from './user.control';
 
 const stripe = require('stripe')(env.stripeTestKey);
 
@@ -39,12 +40,10 @@ class FundWalletController extends BaseService {
         try {
             const { data } = req.body
             const {currency} = data.object.display_items[0];  
-            const balance = WalletSrv.trasactions[data.object.id] 
-            delete WalletSrv.trasactions[data.object.id]                  
-            const result = await UserModel.findOneAndUpdate(
-                { email: data.object.customer_email , 'wallet.symbol': {$eq:currency.toUpperCase()}}, 
-                { $inc: {'wallet.$.balance': balance}}
-            )
+            const amount = WalletSrv.trasactions[data.object.id] 
+            delete WalletSrv.trasactions[data.object.id]    
+            const fundWalletData = {email: data.object.customer_email, amount, currency};
+            const result = await UserControl.FundWallet(fundWalletData);
             this.sendResponse(new BasicResponse(Status.SUCCESS, {data:result}), req, res);   
         } catch (error) {
             this.sendResponse(new BasicResponse(Status.ERROR, error), req, res);   
@@ -54,15 +53,15 @@ class FundWalletController extends BaseService {
         var hash = req.headers["verif-hash"];
         if(!hash) return;
         if(hash!==env.flutterwaveSecretHash) return;
-        const { status, customer, currency , charged_amount} = req.body;
+        const { status, customer, currency , charged_amount: amount} = req.body;
         if(status !== 'successful') return;
-
-        const result = await UserModel.findOneAndUpdate(
-            { email: customer.email, 'wallet.symbol': {$eq:currency.toUpperCase()}}, 
-            { $inc: {'wallet.$.balance': charged_amount}}
-        )
-        console.log(result);
-        res.send(200);
+        const fundWalletData = {email: customer.email, amount, currency};
+        try {
+            const result = await UserControl.FundWallet(fundWalletData);
+            this.sendResponse(new BasicResponse(Status.SUCCESS, {data:result}), req, res);   
+        } catch (error) {
+            this.sendResponse(new BasicResponse(Status.ERROR, error), req, res);   
+        }
 
 
         // Give value to your customer but don't give any output
