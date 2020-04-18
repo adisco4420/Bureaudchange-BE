@@ -9,7 +9,6 @@ const CunRatesSchema = new mongoose.Schema({
         enum: [...cunSymbols],
         required: true,
         uppercase: true,
-        unique: true
     },
     rates: {
         type: [{

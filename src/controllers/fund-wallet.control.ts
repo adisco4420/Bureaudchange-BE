@@ -6,6 +6,8 @@ import env from '../environment/env';
 import UserModel from '../models/user.model';
 import WalletSrv from '../services/wallet.service';
 import UserControl from './user.control';
+import TransController from './transaction..control';
+import { TransI } from "../interfaces/interfaces";
 
 const stripe = require('stripe')(env.stripeTestKey);
 
@@ -37,15 +39,26 @@ class FundWalletController extends BaseService {
     }
     public async StripeSesWebHook(req: Request, res: Response) {
         console.log('====== Stripe Webhook =====');
+        const { data } = req.body
+        const {currency} = data.object.display_items[0];  
+        const amount = WalletSrv.trasactions[data.object.id];        
+        const fundWalletData = {email: data.object.customer_email, amount, currency};
+        const TransData: TransI = {
+            userEmail: fundWalletData.email, type: 'deposit',
+            source: 'card', payCun: currency, amount,
+            status: 'success',
+        }
+        if(!amount) {
+            this.sendResponse(new BasicResponse(Status.NOT_FOUND, {data: 'amount is not found'}), req, res); 
+            return;
+        }
         try {
-            const { data } = req.body
-            const {currency} = data.object.display_items[0];  
-            const amount = WalletSrv.trasactions[data.object.id] 
-            delete WalletSrv.trasactions[data.object.id]    
-            const fundWalletData = {email: data.object.customer_email, amount, currency};
-            const result = await UserControl.FundWallet(fundWalletData);
+            await UserControl.FundWallet(fundWalletData);
+            const result = await TransController.Create({...TransData}); 
+            delete WalletSrv.trasactions[data.object.id];
             this.sendResponse(new BasicResponse(Status.SUCCESS, {data:result}), req, res);   
         } catch (error) {
+            await TransController.Create({...TransData, status: 'falied'});
             this.sendResponse(new BasicResponse(Status.ERROR, error), req, res);   
         }
     }
@@ -53,13 +66,20 @@ class FundWalletController extends BaseService {
         var hash = req.headers["verif-hash"];
         if(!hash) return;
         if(hash!==env.flutterwaveSecretHash) return;
-        const { status, customer, currency , charged_amount: amount} = req.body;
+        const { status, customer, currency , amount} = req.body;
         if(status !== 'successful') return;
         const fundWalletData = {email: customer.email, amount, currency};
+        const TransData: TransI = {
+            userEmail: customer.email, type: 'deposit',
+            source: 'card', payCun: currency, amount,
+            status: 'success',
+        }
         try {
-            const result = await UserControl.FundWallet(fundWalletData);
+            await UserControl.FundWallet(fundWalletData);
+            const result = await TransController.Create(TransData)
             this.sendResponse(new BasicResponse(Status.SUCCESS, {data:result}), req, res);   
         } catch (error) {
+            await TransController.Create({...TransData, status: 'falied'});
             this.sendResponse(new BasicResponse(Status.ERROR, error), req, res);   
         }
 
