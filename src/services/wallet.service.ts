@@ -9,7 +9,9 @@ class WalletService {
         this.trasactions = {
             [sessionId]: amount,
             ...this.trasactions
-        }
+        };
+        console.log('save trans', this.trasactions);
+        
     }
    async stripeCharge(currency: string, amount: number){
         try {            
@@ -19,7 +21,7 @@ class WalletService {
             let charge = (0.03 * rate)+(rate+0.5)
             if(this.base!==currency.toUpperCase()) {
                 charge = (charge * data[convertTo]);
-                charge = (charge * 0.022)+charge;
+                charge = (charge * 0.022)+charge; 
             }
             return this.roundToTwo(charge);
         } catch (error) {

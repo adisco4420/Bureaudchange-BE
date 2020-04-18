@@ -152,6 +152,22 @@ class UserController extends BaseService {
             this.sendResponse(new BasicResponse(Status.ERROR, error), req, res);
         }
     }
+    public  FundWallet(data: {email: string, currency: string, amount: number}): Promise<any> {
+        const {email, currency, amount} = data
+        const promise = new Promise(async (resolve, reject) => {
+            console.log('===Fund Wallet===');
+            if(email && currency && amount) {
+                console.log(data);
+                const result = UserModel.findOneAndUpdate(
+                    { email: email , 'wallet.symbol': {$eq:currency.toUpperCase()}}, 
+                    { $inc: {'wallet.$.balance': amount}});
+                resolve(result);
+            } else {
+                reject('email, currency, balance is required')
+            }
+        }) 
+        return promise;
+    }
     
  }
  export default new UserController

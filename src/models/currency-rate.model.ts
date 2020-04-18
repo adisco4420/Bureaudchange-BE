@@ -1,7 +1,7 @@
 import * as mongoose from "mongoose";
 import CurrencyData  from '../datas/currency'
 
-const cunSymbols = CurrencyData.getAll().map(cun => cun.symbol);
+const cunSymbols = CurrencyData.getAllSymbol();
 
 const CunRatesSchema = new mongoose.Schema({
     currency: {
@@ -9,7 +9,6 @@ const CunRatesSchema = new mongoose.Schema({
         enum: [...cunSymbols],
         required: true,
         uppercase: true,
-        unique: true
     },
     rates: {
         type: [{

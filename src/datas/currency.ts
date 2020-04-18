@@ -10,9 +10,12 @@ class Currency {
         ]
         return list;
     }
+    getAllSymbol(): string[] {
+        return ['USD', 'NGN', 'EUR', 'GBP', 'CNY', 'AED'];
+    }
     getOne(symbol) {
-        const cunList = this.getAll()
-        const cunIndex = cunList.findIndex(cun => cun.symbol === symbol)
+        const cunList = this.getAllSymbol();
+        const cunIndex = cunList.indexOf(symbol)
         if(cunIndex >= 0) {
           return cunList[cunIndex] 
         } else {
