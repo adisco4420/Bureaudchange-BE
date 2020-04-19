@@ -1,11 +1,10 @@
 import { BaseService } from "../services/base.service";
 import { BasicResponse } from "../dtos/outputs/basicresponse";
 import { Status } from '../dtos/enums/statusenums';
-import { NextFunction, Request, Response } from "express";
+import { Request, Response } from "express";
 import env from '../environment/env';
-import UserModel from '../models/user.model';
 import WalletSrv from '../services/wallet.service';
-import UserControl from './user.control';
+import WalletController from './wallet.control';
 import TransController from './transaction..control';
 import { TransI } from "../interfaces/interfaces";
 
@@ -53,7 +52,7 @@ class FundWalletController extends BaseService {
             return;
         }
         try {
-            await UserControl.FundWallet(fundWalletData);
+            await WalletController.FundWallet(fundWalletData);
             const result = await TransController.Create({...TransData}); 
             delete WalletSrv.trasactions[data.object.id];
             this.sendResponse(new BasicResponse(Status.SUCCESS, {data:result}), req, res);   
@@ -75,7 +74,7 @@ class FundWalletController extends BaseService {
             status: 'success',
         }
         try {
-            await UserControl.FundWallet(fundWalletData);
+            await WalletController.FundWallet(fundWalletData);
             const result = await TransController.Create(TransData)
             this.sendResponse(new BasicResponse(Status.SUCCESS, {data:result}), req, res);   
         } catch (error) {
