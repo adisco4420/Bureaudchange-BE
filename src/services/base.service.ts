@@ -57,6 +57,8 @@ export class BaseService {
                 return 400;
             case 'UN_AUTHORIZED':
                 return 401;
+            case 'FORBIDDEN':
+                return 403;
             case 'NOT_FOUND':
                 return 404;
             case 'CONFLICT':
