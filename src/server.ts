@@ -14,6 +14,7 @@ import env from './environment/env';
 import { UserRoute } from "./routes/user.route";
 import FundWalletRoute from "./routes/fund-wallet.route";
 import CunRateRoute from "./routes/currency-rate.route";
+import TransRoute from './routes/transaction.route';
 
 /**
  * The server.
@@ -124,6 +125,8 @@ export class Server {
     FundWalletRoute.loadRoutes('/fund-wallet', router)
     console.log(chalk.default.yellow.bgBlack.bold("Loading currency rates routes"));
     CunRateRoute.loadRoutes('/cun-rate', router)
+    console.log(chalk.default.yellow.bgBlack.bold("Loading transaction routes"));
+    TransRoute.loadRoutes('/trans', router)
 
     //use router middleware
     this.app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
