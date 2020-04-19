@@ -21,13 +21,15 @@ export class BaseController {
     } 
 
     res.status(this.getHttpStatus(serviceResponse.getStatusString()));
-
-    console.log('responding with', response);
+    const result = response.data ? response.data['msg']: response.data
+    console.log('responding with', result);
     res.json(response);
     next();
   }
 
   private getHttpStatus(status: string): number {
+    console.log('status', status);
+    
     switch(status){
       case 'SUCCESS':
         return 200;
@@ -35,8 +37,10 @@ export class BaseController {
         return 201;
       case 'FAILED_VALIDATION':
         return 400;
-      case 'UNPROCESSABLE_ENTRY':
+      case 'UNPROCESSABLE_ENTRY': 
         return 412;
+      case 'FORBIDDEN':
+        return 403;
       default:
         return 500;
     }

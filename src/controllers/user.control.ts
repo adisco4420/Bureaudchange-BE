@@ -139,35 +139,6 @@ class UserController extends BaseService {
         } catch (error) {
             this.sendResponse(new BasicResponse(Status.ERROR, error), req, res);
         }
-    }
-    public async WalletBalance(req: Request, res: Response) {
-        try {
-            const user = await UserModel.findById(req.user._id, {wallet: true});
-            if(user) {
-                this.sendResponse(new BasicResponse(Status.SUCCESS, { msg: 'User Profile', data: user}), req, res);
-            } else {
-                this.sendResponse(new BasicResponse(Status.UNPROCESSABLE_ENTRY, { msg: 'User not found', data: user}), req, res);
-            }
-        } catch (error) {
-            this.sendResponse(new BasicResponse(Status.ERROR, error), req, res);
-        }
-    }
-    public  FundWallet(data: {email: string, currency: string, amount: number}): Promise<any> {
-        const {email, currency, amount} = data
-        const promise = new Promise(async (resolve, reject) => {
-            console.log('===Fund Wallet===');
-            if(email && currency && amount) {
-                console.log(data);
-                const result = UserModel.findOneAndUpdate(
-                    { email: email , 'wallet.symbol': {$eq:currency.toUpperCase()}}, 
-                    { $inc: {'wallet.$.balance': amount}});
-                resolve(result);
-            } else {
-                reject('email, currency, balance is required')
-            }
-        }) 
-        return promise;
-    }
-    
+    }    
  }
  export default new UserController

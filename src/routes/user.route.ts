@@ -1,12 +1,13 @@
 import { NextFunction, Request, Response, Router } from "express";
 import { BaseController } from "../controllers/base.control";
-import UserController from '../controllers/user.control'
+import UserController from '../controllers/user.control';
+import WalletController from '../controllers/wallet.control';
 import Joi from '../middlewares/validator.midware';
 import UserVtor from '../validations/user.validator'
 import AuthMidWare from '../middlewares/auth.midware';
 
 export class UserRoute extends BaseController {
-  constructor() {
+  constructor() { 
     super();
   }
 
@@ -19,6 +20,7 @@ export class UserRoute extends BaseController {
     this.initLogin(prefix, router);
     this.initProfile(prefix, router);
     this.initWalletBalance(prefix, router);
+    this.initExchangeCurrency(prefix, router);
   }
     private initRegister(prefix: String, router: Router): any { 
       router.post(prefix + "/register", Joi.vdtor(UserVtor.Register), (req, res: Response, next: NextFunction) => {
@@ -57,7 +59,12 @@ export class UserRoute extends BaseController {
     }
     private initWalletBalance(prefix: String, router: Router): any { 
       router.get(prefix + "/wallet-balance", AuthMidWare, (req, res: Response) => {
-        UserController.WalletBalance(req, res)
+        WalletController.WalletBalance(req, res)
+      })
+    }
+    private initExchangeCurrency(prefix: String, router: Router): any { 
+      router.post(prefix + "/exchange",Joi.vdtor(UserVtor.Exchange), AuthMidWare, async (req: Request, res: Response) => {
+        WalletController.ExchangeCurrency(req, res)
       })
     }
 

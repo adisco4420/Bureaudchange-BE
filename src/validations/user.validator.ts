@@ -1,4 +1,6 @@
-import * as joi from 'joi'
+import * as joi from 'joi';
+import currencyData from '../datas/currency';
+const cunSymbol = currencyData.getAllSymbol();
 
 class UserValidator {
     public Register = {
@@ -20,6 +22,11 @@ class UserValidator {
     };
     public PinSetup = {
         pin: joi.string().min(5).max(5).required()
+    }
+    public Exchange = {
+        amount: joi.number().required(), 
+        payCun: joi.string().required().valid([...cunSymbol]), 
+        recieveCun: joi.string().required().valid([...cunSymbol]),
     }
 }
 export default new UserValidator()

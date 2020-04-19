@@ -1,5 +1,6 @@
 import { Router, Request, Response } from "express";
 import CunRatesControl from '../controllers/currency-rates.control';
+import AdminMidWare from '../middlewares/admin.midware';
 
 
 class CunRatesRoute {
@@ -9,7 +10,7 @@ class CunRatesRoute {
         this.updateCunRate(prefix, router)
     }
     public addCunRate(prefix: String, router: Router) {
-        router.post(prefix + '/add', (req: Request, res: Response) => {
+        router.post(prefix + '/add', AdminMidWare, (req: Request, res: Response) => {
             CunRatesControl.AddCunRate(req, res)
         })
     }
@@ -19,7 +20,7 @@ class CunRatesRoute {
         })
     }
     public updateCunRate(prefix: String, router: Router){
-        router.patch(prefix + '/update/:currency', (req: Request, res: Response) => {
+        router.patch(prefix + '/update/:currency', AdminMidWare, (req: Request, res: Response) => {
             CunRatesControl.UpdateCunRate(req, res)
         })
     }
