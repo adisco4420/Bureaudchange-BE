@@ -45,6 +45,10 @@ const TransactionSchema = new mongoose.Schema({
         type: Date,
         required: true,
         default: Date.now()
+    },
+    exchangeRate: {
+        type: Number,
+        default: 0
     }
 })
 const TransactionModel = mongoose.model('transactions', TransactionSchema);

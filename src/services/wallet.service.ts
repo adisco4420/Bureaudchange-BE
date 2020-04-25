@@ -59,7 +59,7 @@ class WalletService {
                 break;
         }
         const {status, min, max} = result;
-        return {status: result.status, msg: `Minimum: ${min}, Maximum: ${max} Amount`}
+        return {status: status, msg: `Minimum: ${min}, Maximum: ${max} ${currency}`}
     }
     TransFerFee(payload: {amount: number, currency: string}): number{
         const result = 0.001 * payload.amount;
