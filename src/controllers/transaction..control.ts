@@ -32,8 +32,8 @@ class TransactionController extends BaseService {
                         console.log('deposit');
                         break;
                     case 'exchange':
-                        const transrate = await WalletSrv.TransRate({recieveCun, payCun});
-                        const total = Number(amount/transrate);
+                        const exchangeRate = await WalletSrv.TransRate({recieveCun, payCun});
+                        const total = Number(amount/exchangeRate);
                         const payload: any = {amount: total, currency: recieveCun, email }
                         await WalletController.FundWallet(payload);
                         const result = await TransModel.findByIdAndUpdate(id, {status: 'success'}, {new: true});

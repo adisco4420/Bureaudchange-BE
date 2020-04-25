@@ -70,7 +70,8 @@ class WalletController extends BaseService {
                 return;
             }
             await this.DebitWallet(payload);
-            const TransData: TransI = {userEmail, amount, type: 'exchange', payCun, recieveCun, status: 'pending', source: 'wallet'};
+            const exchangeRate = await WalletSrv.TransRate({recieveCun, payCun});
+            const TransData: TransI = {userEmail, amount, type: 'exchange', payCun, exchangeRate, recieveCun, status: 'pending', source: 'wallet'};
             const trans = await TransController.Create(TransData);
             const result = {data: trans, msg: 'User Exchange Successful'}
             this.sendResponse(new BasicResponse(Status.SUCCESS, result), req, res);
