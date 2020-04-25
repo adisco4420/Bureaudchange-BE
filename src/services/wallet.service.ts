@@ -14,20 +14,25 @@ class WalletService {
         console.log('save trans', this.trasactions);
         
     }
-   async stripeCharge(currency: string, amount: number){
-        try {            
-            const convertTo = `${this.base}_${currency}`.toUpperCase();
-            const {data} = await axios.get(`${currencyUrl}/convert?q=${convertTo}&compact=ultra&apiKey=${env.currencyApiKey}`);
-            const rate = this.roundToTwo(amount/data[convertTo]);
-            let charge = (0.03 * rate)+(rate+0.5)
-            if(this.base!==currency.toUpperCase()) {
-                charge = (charge * data[convertTo]);
-                charge = (charge * 0.022)+charge; 
-            }
-            return this.roundToTwo(charge);
-        } catch (error) {
-            return error
-        }
+    stripeCharge(currency: string, amount: number): Promise<{amount: number}>{
+        const promise = new Promise(async(resolve, reject) => {
+        const convertTo = `${this.base}_${currency}`.toUpperCase();
+        axios.get(`${currencyUrl}/convert?q=${convertTo}&compact=ultra&apiKey=${env.currencyApiKey}`)
+            .then(res => {
+                const {data} = res;
+                const rate = this.roundToTwo(amount/data[convertTo]);
+                let charge = (0.03 * rate)+(rate+0.5)
+                if(this.base!==currency.toUpperCase()) {
+                    charge = (charge * data[convertTo]);
+                    charge = (charge * 0.022)+charge; 
+                }
+                resolve({amount: this.roundToTwo(charge)})
+            })
+            .catch(err => {
+                reject(err.response.data)
+            })
+       })
+       return (promise as Promise<{amount: number}>)
     }
     TransRate(payload: {recieveCun: String, payCun: String}): Promise<any> {
         const { payCun, recieveCun} = payload;

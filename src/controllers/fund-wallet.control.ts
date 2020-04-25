@@ -16,7 +16,9 @@ class FundWalletController extends BaseService {
         try {
             const payload = req.body;
             const currency = payload.currency.toLowerCase()
-            const amount = await WalletSrv.stripeCharge(currency, payload.amount);
+            const {amount} = await WalletSrv.stripeCharge(currency, payload.amount);
+            if(!amount) return;
+
             console.log('converted', amount);
             const session = await stripe.checkout.sessions.create({
                 customer_email: req.user.email,
@@ -32,7 +34,7 @@ class FundWalletController extends BaseService {
               });
               WalletSrv.saveTrans({sessionId: session.id, amount: payload.amount})
               this.sendResponse(new BasicResponse(Status.SUCCESS, {data:session}), req, res);   
-        } catch (error) {
+        } catch (error) {            
             this.sendResponse(new BasicResponse(Status.ERROR, error), req, res);   
         }
     }
