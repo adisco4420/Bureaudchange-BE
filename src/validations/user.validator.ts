@@ -28,5 +28,17 @@ class UserValidator {
         payCun: joi.string().required().valid([...cunSymbol]), 
         recieveCun: joi.string().required().valid([...cunSymbol]),
     }
+    public EditProfile = {
+        firstName: joi.string().required(),
+        lastName: joi.string().required(),
+        phoneNumber: joi.number().required(),
+        address: joi.object({
+            street: joi.string().required(),
+            city: joi.string().required(),
+            state: joi.string().required(),
+            postalcode: joi.string().required(),
+            country: joi.string().required(),
+        }).required()  
+    }
 }
 export default new UserValidator()

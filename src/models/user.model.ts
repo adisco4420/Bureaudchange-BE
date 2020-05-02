@@ -37,10 +37,6 @@ export let UserSchema = new mongoose.Schema({
         type: Date,
         default: new Date()
     },
-    bvnNumber: {
-        type: Number,
-        select: false
-    },
     pin: {
         type: String,
         minlength: 5,
@@ -55,7 +51,18 @@ export let UserSchema = new mongoose.Schema({
             sign: {type: String, default: '₦'},
         }],
         select: false
+    },
+    address: {
+        type: {
+            street: {type: String, default: 'Tokosi'},
+            city: {type: String, default: 'Surulere'},
+            state: {type: String, default: 'State'},
+            postalcode: {type: String, default: '1234'},
+            country: {type: String, default: 'Nigeria'},
+        },
+        select: false
     }
 });
+
 const UserModel = mongoose.model('users', UserSchema)
 export default UserModel
