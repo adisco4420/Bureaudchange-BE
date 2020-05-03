@@ -21,6 +21,7 @@ export class UserRoute extends BaseController {
     this.initProfile(prefix, router);
     this.initWalletBalance(prefix, router);
     this.initExchangeCurrency(prefix, router);
+    this.initEditProfile(prefix, router);
   }
     private initRegister(prefix: String, router: Router): any { 
       router.post(prefix + "/register", Joi.vdtor(UserVtor.Register), (req, res: Response, next: NextFunction) => {
@@ -57,8 +58,13 @@ export class UserRoute extends BaseController {
         UserController.Profile(req, res)
       })
     }
+    private initEditProfile(prefix: String, router: Router): any { 
+      router.patch(prefix + "/edit-profile", Joi.vdtor(UserVtor.EditProfile), AuthMidWare, (req, res: Response) => {
+        UserController.EditProfile(req, res)
+      })
+    }
     private initWalletBalance(prefix: String, router: Router): any { 
-      router.get(prefix + "/wallet-balance", AuthMidWare, (req, res: Response) => {
+      router.get(prefix + "/wallet-balance",  AuthMidWare, (req, res: Response) => {
         WalletController.WalletBalance(req, res)
       })
     }

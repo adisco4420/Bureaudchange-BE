@@ -22,7 +22,7 @@ export let UserSchema = new mongoose.Schema({
         select: false
         },
     phoneNumber: {
-        type: Number,
+        type: String,
         required: true
     },
     isVerified: {
@@ -36,10 +36,6 @@ export let UserSchema = new mongoose.Schema({
     createdAt: { 
         type: Date,
         default: new Date()
-    },
-    bvnNumber: {
-        type: Number,
-        select: false
     },
     pin: {
         type: String,
@@ -55,7 +51,27 @@ export let UserSchema = new mongoose.Schema({
             sign: {type: String, default: '₦'},
         }],
         select: false
+    },
+    address: {
+        type: {
+            street: {type: String, default: ''},
+            city: {type: String, default: ''},
+            state: {type: String, default: ''},
+            postalcode: {type: String, default: ''},
+            country: {type: String, default: ''},
+        },
+        select: false
+    },
+    bankAccounts: {
+        type: [{
+            currency: {type: String},
+            bankName: {type: String},
+            accountNo: {type: String},
+            accountName: {type: String}
+        }],
+        select: false
     }
 });
+
 const UserModel = mongoose.model('users', UserSchema)
 export default UserModel

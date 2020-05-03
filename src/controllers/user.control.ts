@@ -57,8 +57,8 @@ class UserController extends BaseService {
             this.sendResponse(new BasicResponse(Status.ERROR, error), req, res);           
         }
     }
-    public async Confirm(req: Request, res: Response) {
-        try {            
+    public async Confirm(req: Request, res: Response) { 
+        try {                                    
             const updateUser = await UserModel.findByIdAndUpdate(req.user.id, {isVerified: true}, { new: true});
             let responseObj = null;            
             if(!updateUser) {
@@ -83,7 +83,7 @@ class UserController extends BaseService {
                     responseObj =  new BasicResponse(Status.SUCCESS,{ msg: 'You are already verified'});
                 } else {
                     const token = TokenService.sign({id: user.id}, '1h');
-                    EmailService.send('confirm', {...user.toJSON(), token, });
+                    EmailService.send('confirm', {...user.toJSON(), token, baseUrl: req.body.baseUrl});
                     responseObj =  new BasicResponse(Status.SUCCESS,{ msg: 'Verification message has been sented'});
                 }
             }
@@ -105,7 +105,7 @@ class UserController extends BaseService {
                     }
                 }, {new: true})
             if(user) {
-                responseObj =  new BasicResponse(Status.SUCCESS,{ msg: 'Wallet Setup', data: []});
+                responseObj =  new BasicResponse(Status.CREATED,{ msg: 'Wallet Setup', data: []});
             } else {
                 responseObj =  new BasicResponse(Status.UNPROCESSABLE_ENTRY,{ msg: 'User not found or Currency exist'});
             }
@@ -130,9 +130,21 @@ class UserController extends BaseService {
     }
     public async Profile(req: Request, res: Response) {
         try {
-            const user = await UserModel.findById(req.user._id);
+            const user = await UserModel.findById(req.user._id, '+address');
             if(user) {
                 this.sendResponse(new BasicResponse(Status.SUCCESS, { msg: 'User Profile', data: user}), req, res);
+            } else {
+                this.sendResponse(new BasicResponse(Status.UNPROCESSABLE_ENTRY, { msg: 'User not found', data: user}), req, res);
+            }
+        } catch (error) {
+            this.sendResponse(new BasicResponse(Status.ERROR, error), req, res);
+        }
+    }   
+    public async EditProfile(req: Request, res: Response) {
+        try {
+            const user = await UserModel.findByIdAndUpdate(req.user._id, {...req.body});
+            if(user) {
+                this.sendResponse(new BasicResponse(Status.SUCCESS, { msg: 'User Profile Updated Successfully', data: user}), req, res);
             } else {
                 this.sendResponse(new BasicResponse(Status.UNPROCESSABLE_ENTRY, { msg: 'User not found', data: user}), req, res);
             }
