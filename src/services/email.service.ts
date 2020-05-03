@@ -4,12 +4,12 @@ import * as mjml2html from 'mjml'
 
 
 class EmailService {
-    private companyName = 'Bureaudchange'
+    private companyName = 'Kashxchange'
     private baseUrl = 'https://bureaudchange-1.firebaseapp.com'
     send(emailType: string, payload: {email?: string, token: string, firstName: string, baseUrl: string}) {     
       this.baseUrl =    payload.baseUrl || this.baseUrl;
         const data = {
-            from: 'Bureaudchange <admin@Bureaudchange.com>',
+            from: `${this.companyName} <admin@${this.companyName}.com>`,
             to: payload.email,
             subject: 'Verify Email Address',
             text: 'This is a test email',
