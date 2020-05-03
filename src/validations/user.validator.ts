@@ -7,7 +7,7 @@ class UserValidator {
         email: joi.string().email({ minDomainSegments: 2 }).required(),
         firstName: joi.string().required(),
         lastName: joi.string().required(),
-        phoneNumber: joi.number().required(),
+        phoneNumber: joi.string().required(),
         password: joi.string().required(),
         baseUrl: joi.string().required()
     }
@@ -31,7 +31,7 @@ class UserValidator {
     public EditProfile = {
         firstName: joi.string().required(),
         lastName: joi.string().required(),
-        phoneNumber: joi.number().required(),
+        phoneNumber: joi.string().required(),
         address: joi.object({
             street: joi.string().required(),
             city: joi.string().required(),
@@ -39,6 +39,12 @@ class UserValidator {
             postalcode: joi.string().required(),
             country: joi.string().required(),
         }).required()  
+    }
+    public BankSetup = {
+        currency: joi.string().required().valid([...cunSymbol]),
+        bankName: joi.string().required(),
+        accountNo: joi.string().required(),
+        accountName: joi.string().required()
     }
 }
 export default new UserValidator()
