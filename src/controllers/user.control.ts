@@ -105,7 +105,7 @@ class UserController extends BaseService {
                     }
                 }, {new: true})
             if(user) {
-                responseObj =  new BasicResponse(Status.SUCCESS,{ msg: 'Wallet Setup', data: []});
+                responseObj =  new BasicResponse(Status.CREATED,{ msg: 'Wallet Setup', data: []});
             } else {
                 responseObj =  new BasicResponse(Status.UNPROCESSABLE_ENTRY,{ msg: 'User not found or Currency exist'});
             }
@@ -144,7 +144,7 @@ class UserController extends BaseService {
         try {
             const user = await UserModel.findByIdAndUpdate(req.user._id, {...req.body});
             if(user) {
-                this.sendResponse(new BasicResponse(Status.SUCCESS, { msg: 'User Profile Editted', data: user}), req, res);
+                this.sendResponse(new BasicResponse(Status.SUCCESS, { msg: 'User Profile Updated Successfully', data: user}), req, res);
             } else {
                 this.sendResponse(new BasicResponse(Status.UNPROCESSABLE_ENTRY, { msg: 'User not found', data: user}), req, res);
             }
