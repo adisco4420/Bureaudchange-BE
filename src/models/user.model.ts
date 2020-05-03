@@ -22,7 +22,7 @@ export let UserSchema = new mongoose.Schema({
         select: false
         },
     phoneNumber: {
-        type: Number,
+        type: String,
         required: true
     },
     isVerified: {
@@ -54,12 +54,21 @@ export let UserSchema = new mongoose.Schema({
     },
     address: {
         type: {
-            street: {type: String, default: 'Tokosi'},
-            city: {type: String, default: 'Surulere'},
-            state: {type: String, default: 'State'},
-            postalcode: {type: String, default: '1234'},
-            country: {type: String, default: 'Nigeria'},
+            street: {type: String, default: ''},
+            city: {type: String, default: ''},
+            state: {type: String, default: ''},
+            postalcode: {type: String, default: ''},
+            country: {type: String, default: ''},
         },
+        select: false
+    },
+    bankAccounts: {
+        type: [{
+            currency: {type: String},
+            bankName: {type: String},
+            accountNo: {type: String},
+            accountName: {type: String}
+        }],
         select: false
     }
 });
