@@ -17,7 +17,7 @@ class CunRatesController extends BaseService {
                const rates = payload.rates;
                if(rates && Array.isArray(rates) && rates.findIndex(rate => rate.currency === payload.currency) === -1) {
                 const cun = await CunRatesModel.create({...payload})
-                responseObj = new BasicResponse(Status.SUCCESS, {data: cun})
+                responseObj = new BasicResponse(Status.CREATED, {data: cun})
                } else {
                 responseObj = new BasicResponse(Status.PRECONDITION_FAILED, {msg: 'currency name cannot be among rates'}) 
                }
