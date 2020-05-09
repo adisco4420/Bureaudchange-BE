@@ -28,6 +28,16 @@ class UserValidator {
         payCun: joi.string().required().valid([...cunSymbol]), 
         recieveCun: joi.string().required().valid([...cunSymbol]),
     }
+    public Withdraw = {
+        amount: joi.number().required(), 
+        recieveCun: joi.string().required().valid([...cunSymbol]), 
+        pin: joi.string().required()
+    }
+    public ValidateTransCunAmount = {
+        amount: joi.number().required(),
+        currency: joi.string().required().valid([...cunSymbol]),
+        type: joi.string().required().valid(['withdraw', 'exchange'])
+    }
     public EditProfile = {
         firstName: joi.string().required(),
         lastName: joi.string().required(),

@@ -1,3 +1,4 @@
+import { compareSync } from 'bcrypt-nodejs';
 import { BaseService } from "../services/base.service";
 import { BasicResponse } from "../dtos/outputs/basicresponse";
 import { Status } from '../dtos/enums/statusenums';
@@ -36,8 +37,8 @@ class WalletController extends BaseService {
         }) 
         return promise;
     }
-    public DebitWallet(data: {email: string, amount: number, currency: string}): Promise<any> {
-        const {email, amount, currency} = data;
+    public DebitWallet(data: {email: string, amount: number, currency: string, type: 'withdraw'|'exchange'}): Promise<any> {
+        const {email, amount, currency, type} = data;
         const promise = new Promise(async (resolve, reject) => {
             console.log('===Debit Wallet===');            
             const findUser = (await UserModel.findOne({email}, {wallet: true}));
@@ -46,16 +47,16 @@ class WalletController extends BaseService {
                 return;
             }
             const user = findUser.toJSON();
-            const fee = WalletSrv.TransFerFee({amount, currency});                
+            const fee = WalletSrv.TransFerFee({amount, currency, type});                
             const selectedCun = user.wallet.find(cun => cun.symbol === currency);
-            const totalAmount = amount + fee;                
+            const totalAmount = Number(amount + fee);          
             if(!(selectedCun && (selectedCun.balance >= totalAmount))) {
                 reject(new BasicResponse(Status.UNPROCESSABLE_ENTRY, {msg:  'Insufficient Fund'}));
                 return; 
             }
             const result = await UserModel.findOneAndUpdate(
                 { email: email , 'wallet.symbol': {$eq:currency.toUpperCase()}}, 
-                { $inc: {'wallet.$.balance': -amount}});
+                { $inc: {'wallet.$.balance': -totalAmount}});
             resolve(result); 
         }) 
         return promise;
@@ -69,8 +70,8 @@ class WalletController extends BaseService {
                 this.sendResponse(new BasicResponse(Status.FAILED_VALIDATION, {msg: minMaxCheck.msg}), req, res);
                 return;
             }
-            await this.DebitWallet(payload);
-            const exchangeRate = await WalletSrv.TransRate({recieveCun, payCun});
+            await this.DebitWallet({...payload, type: 'exchange'});
+            const exchangeRate = await WalletSrv.ExchangeRate({recieveCun, payCun});
             const TransData: TransI = {userEmail, amount, type: 'exchange', payCun, exchangeRate, recieveCun, status: 'pending', source: 'wallet'};
             const trans = await TransController.Create(TransData);
             const result = {data: trans, msg: 'User Exchange Successful'}
@@ -95,9 +96,44 @@ class WalletController extends BaseService {
             this.sendResponse(new BasicResponse(Status.ERROR, error), req, res);
         }
     }
-    public async WithdrawCurrency(req: Request, res: Response) {
-
+    public async ValidateTransCunAmount(req: Request, res: Response) {
+        try {
+            const { currency, amount, type } = req.body;
+            const minMaxCheck = WalletSrv.MinMaxAmount(currency, amount); 
+            if(!minMaxCheck.status) {
+                this.sendResponse(new BasicResponse(Status.FAILED_VALIDATION, {msg: minMaxCheck.msg}), req, res);
+                return;
+            }
+            this.sendResponse(new BasicResponse(Status.SUCCESS, {msg: 'currency amount valid'}), req, res);
+        } catch (error) {
+            this.sendResponse(new BasicResponse(Status.ERROR, error), req, res);
+        }
     }
+    public async WithdrawCurrency(req: Request, res: Response) {
+        try {
+            const payload: any = {...req.body,  email: req.user.email, currency: req.body.recieveCun};
+            const { email: userEmail, amount, recieveCun, currency } = payload;
+            const minMaxCheck = WalletSrv.MinMaxAmount(currency, amount);            
+            if(!minMaxCheck.status) {
+                this.sendResponse(new BasicResponse(Status.FAILED_VALIDATION, {msg: minMaxCheck.msg}), req, res);
+                return;
+            }
+            const user: any = await UserModel.findOne({_id: req.user._id}, '+pin');
+            const validateUserPin =  compareSync(req.body.pin, user.pin)
+            if(!validateUserPin) {
+                this.sendResponse(new BasicResponse(Status.FORBIDDEN, {msg: 'Incorrect Pin'}), req, res);
+                return;
+            }
+            await this.DebitWallet({...payload, type: 'withdraw'});
+            const TransData: TransI = {userEmail, amount, type: "withdraw", recieveCun, status: 'pending', source: "bank-transfer"};
+            const trans = await TransController.Create(TransData);
+            const result = {data: trans, msg: 'User Withdraw Successful'}
+            this.sendResponse(new BasicResponse(Status.SUCCESS, result), req, res);
+          } catch (error) {
+            this.sendResponse(error, req, res);
+          }
+    }
+
 
 }
 export default new WalletController;

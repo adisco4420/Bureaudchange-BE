@@ -44,7 +44,7 @@ const TransactionSchema = new mongoose.Schema({
     date: {
         type: Date,
         required: true,
-        default: Date.now()
+        default: new Date().toLocaleDateString()
     },
     exchangeRate: {
         type: Number,

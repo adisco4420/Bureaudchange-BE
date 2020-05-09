@@ -20,7 +20,7 @@ export class Joi extends BaseService {
               msg: 'Some validation errors occured',
               errors: errorDetails,
             }   
-           return this.sendResponse(new BasicResponse(Status.ERROR, response), req, res)
+           return this.sendResponse(new BasicResponse(Status.FAILED_VALIDATION, response), req, res)
           }
         }; 
   }

@@ -32,7 +32,7 @@ class TransactionController extends BaseService {
                         console.log('deposit');
                         break;
                     case 'exchange':
-                        const exchangeRate = await WalletSrv.TransRate({recieveCun, payCun});
+                        const exchangeRate = await WalletSrv.ExchangeRate({recieveCun, payCun});
                         const total = Number(amount/exchangeRate);
                         const payload: any = {amount: total, currency: recieveCun, email }
                         await WalletController.FundWallet(payload);
