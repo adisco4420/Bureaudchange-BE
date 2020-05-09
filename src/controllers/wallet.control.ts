@@ -12,7 +12,7 @@ class WalletController extends BaseService {
         try {
             const user = await UserModel.findById(req.user._id, {wallet: true});
             if(user) {
-                this.sendResponse(new BasicResponse(Status.SUCCESS, { msg: 'User Profile', data: user}), req, res);
+                this.sendResponse(new BasicResponse(Status.SUCCESS, { msg: 'User Wallet', data: user}), req, res);
             } else {
                 this.sendResponse(new BasicResponse(Status.UNPROCESSABLE_ENTRY, { msg: 'User not found', data: user}), req, res);
             }
@@ -78,6 +78,25 @@ class WalletController extends BaseService {
           } catch (error) {
             this.sendResponse(error, req, res);
           }
+    }
+    public async FetchWalletDetails(req: Request, res: Response) {
+        try {
+            const user: any = await UserModel.findOne({
+                _id: req.user._id,
+                'wallet.symbol': {$eq: req.params.currency}
+            }, {'wallet': {$elemMatch: {symbol: req.params.currency}}});
+            if(user) {
+                const details = user.wallet ? user.wallet[0] : user;                 
+                this.sendResponse(new BasicResponse(Status.SUCCESS, { msg: 'User Wallet Detail', data: details}), req, res);
+            } else {
+                this.sendResponse(new BasicResponse(Status.UNPROCESSABLE_ENTRY, { msg: 'User not found', data: user}), req, res);
+            }
+        } catch (error) {
+            this.sendResponse(new BasicResponse(Status.ERROR, error), req, res);
+        }
+    }
+    public async WithdrawCurrency(req: Request, res: Response) {
+
     }
 
 }

@@ -20,6 +20,7 @@ export class UserRoute extends BaseController {
     this.initLogin(prefix, router);
     this.initProfile(prefix, router);
     this.initWalletBalance(prefix, router);
+    this.initWalletDetails(prefix, router);
     this.initExchangeCurrency(prefix, router);
     this.initEditProfile(prefix, router);
   }
@@ -68,6 +69,12 @@ export class UserRoute extends BaseController {
         WalletController.WalletBalance(req, res)
       })
     }
+    private initWalletDetails(prefix: String, router: Router): any { 
+      router.get(prefix + "/wallet-details/:currency",  AuthMidWare, (req, res: Response) => {
+        WalletController.FetchWalletDetails(req, res)
+      })
+    }
+
     private initExchangeCurrency(prefix: String, router: Router): any { 
       router.post(prefix + "/exchange",Joi.vdtor(UserVtor.Exchange), AuthMidWare, async (req: Request, res: Response) => {
         WalletController.ExchangeCurrency(req, res)

@@ -10,6 +10,7 @@ class UserBankController extends BaseService {
             let responseObj = null;
             const user = await UserModel.findOneAndUpdate({
                     _id: req.user._id,
+                    'wallet.symbol': {$eq: req.body.currency},
                     'bankAccounts.currency': {$ne: req.body.currency},
                 }, 
                 {
@@ -20,7 +21,7 @@ class UserBankController extends BaseService {
             if(user) {
                 responseObj =  new BasicResponse(Status.CREATED,{ msg: 'Bank Added Successfully', data: []});
             } else {
-                responseObj =  new BasicResponse(Status.UNPROCESSABLE_ENTRY,{ msg: 'User not found or Bank Currency exist'});
+                responseObj =  new BasicResponse(Status.UNPROCESSABLE_ENTRY,{ msg: 'Bank Currency Already Exist'});
             }
             this.sendResponse(responseObj, req, res);
         } catch (error) {
