@@ -34,7 +34,7 @@ class WalletService {
        })
        return (promise as Promise<{amount: number}>)
     }
-    TransRate(payload: {recieveCun: String, payCun: String}): Promise<any> {
+    ExchangeRate(payload: {recieveCun: String, payCun: String}): Promise<any> {
         const { payCun, recieveCun} = payload;
         const promise = new Promise(async (resolve, reject) => {
             const cunRates = await CunModel.findOne({currency:  payCun});
@@ -44,6 +44,26 @@ class WalletService {
             resolve(transRate.rate)
         })
         return promise;
+    }
+    WithdrawRate(payload: {currency: string, amount: number}): number {
+        let rate = 100;
+        switch (payload.currency) {
+            case 'NGN':
+                rate = 100
+                break;
+            case 'CNY':
+                rate = 50
+                break;
+            case 'AED':
+                rate = 20
+                break;
+            case 'USD': case 'EUR': case 'GBP':
+                rate = 3
+                break;
+            default:
+                break;
+        }
+        return rate;
     }
     MinMaxAmount(currency: String, amount: number): {status: boolean, msg: string} {
         let result = {status: true, min: '50', max: '500'}
@@ -66,8 +86,11 @@ class WalletService {
         const {status, min, max} = result;
         return {status: status, msg: `Minimum: ${min}, Maximum: ${max} ${currency}`}
     }
-    TransFerFee(payload: {amount: number, currency: string}): number{
-        const result = 0.001 * payload.amount;
+    TransFerFee(payload: {amount: number, currency: string, type: 'withdraw'|'exchange'}): number{
+        let result = 0.001 * payload.amount;
+        if(payload.type==='withdraw') {
+            result = this.WithdrawRate({currency: payload.currency, amount: payload.amount});
+        }
         return Number(result);
     } 
     roundToTwo(num: number) {    

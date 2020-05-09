@@ -20,8 +20,11 @@ export class UserRoute extends BaseController {
     this.initLogin(prefix, router);
     this.initProfile(prefix, router);
     this.initWalletBalance(prefix, router);
+    this.initWalletDetails(prefix, router);
     this.initExchangeCurrency(prefix, router);
+    this.initWithdrawCurrency(prefix, router);
     this.initEditProfile(prefix, router);
+    this.validateTransCunAmount(prefix, router);
   }
     private initRegister(prefix: String, router: Router): any { 
       router.post(prefix + "/register", Joi.vdtor(UserVtor.Register), (req, res: Response, next: NextFunction) => {
@@ -68,9 +71,25 @@ export class UserRoute extends BaseController {
         WalletController.WalletBalance(req, res)
       })
     }
+    private initWalletDetails(prefix: String, router: Router): any { 
+      router.get(prefix + "/wallet-details/:currency",  AuthMidWare, (req, res: Response) => {
+        WalletController.FetchWalletDetails(req, res)
+      })
+    }
     private initExchangeCurrency(prefix: String, router: Router): any { 
-      router.post(prefix + "/exchange",Joi.vdtor(UserVtor.Exchange), AuthMidWare, async (req: Request, res: Response) => {
+      router.post(prefix + "/exchange", Joi.vdtor(UserVtor.Exchange), AuthMidWare, async (req: Request, res: Response) => {
         WalletController.ExchangeCurrency(req, res)
+      })
+    }
+    private initWithdrawCurrency(prefix: String, router: Router): any { 
+      router.post(prefix + "/withdraw", Joi.vdtor(UserVtor.Withdraw), AuthMidWare, async (req: Request, res: Response) => {
+        WalletController.WithdrawCurrency(req, res)
+      })
+    }
+    private validateTransCunAmount(prefix: String, router: Router): any { 
+      router.post(prefix + "/validate-trans-cun-amount",
+        Joi.vdtor(UserVtor.ValidateTransCunAmount), AuthMidWare, async (req: Request, res: Response) => {
+        WalletController.ValidateTransCunAmount(req, res)
       })
     }
 
