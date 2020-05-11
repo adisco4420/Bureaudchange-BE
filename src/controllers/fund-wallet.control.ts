@@ -28,6 +28,7 @@ class FundWalletController extends BaseService {
                   amount: amount*100,
                   currency: payload.currency.toLowerCase(),
                   quantity: 1,
+                  description: payload.amount
                 }],
                 success_url: payload.success_url+'?session_id={CHECKOUT_SESSION_ID}',
                 cancel_url: payload.cancel_url,
@@ -40,14 +41,15 @@ class FundWalletController extends BaseService {
     }
     public async StripeSesWebHook(req: Request, res: Response) {
         console.log('====== Stripe Webhook =====');
-        const { data } = req.body
-        const {currency} = data.object.display_items[0];  
-        const amount = WalletSrv.trasactions[data.object.id];        
+        const { data, created } = req.body
+        const {currency, custom} = data.object.display_items[0];  
+        // const amount = WalletSrv.trasactions[data.object.id];      
+        const amount =   Number(custom.description)
         const fundWalletData = {email: data.object.customer_email, amount, currency};
         const TransData: TransI = {
             userEmail: fundWalletData.email, type: 'deposit',
             source: 'card', payCun: currency, amount,
-            status: 'success',
+            status: 'success', date: new Date().toISOString()
         }
         if(!amount) {
             this.sendResponse(new BasicResponse(Status.NOT_FOUND, {data: 'amount is not found'}), req, res); 
@@ -67,13 +69,13 @@ class FundWalletController extends BaseService {
         var hash = req.headers["verif-hash"];
         if(!hash) return;
         if(hash!==env.flutterwaveSecretHash) return;
-        const { status, customer, currency , amount} = req.body;
+        const { status, customer, currency , amount, createdAt} = req.body;
         if(status !== 'successful') return;
         const fundWalletData = {email: customer.email, amount, currency};
         const TransData: TransI = {
             userEmail: customer.email, type: 'deposit',
             source: 'card', payCun: currency, amount,
-            status: 'success',
+            status: 'success', date: createdAt
         }
         try {
             await WalletController.FundWallet(fundWalletData);

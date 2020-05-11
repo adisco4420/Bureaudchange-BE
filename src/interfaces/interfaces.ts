@@ -13,6 +13,6 @@ export interface TransI {
     recieveCun?: String,
     payCun?: String,
     amount: number,
-    date?: Date,
+    date?: any,
     exchangeRate?: number
 }
