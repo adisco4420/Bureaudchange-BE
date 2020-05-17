@@ -78,7 +78,7 @@ class UserController extends BaseService {
             let responseObj = null;
             const user: any = await UserModel.findOne({email: req.body.email})
             if (!user) {
-                responseObj =  new BasicResponse(Status.UNPROCESSABLE_ENTRY,{ msg: 'User not found'});
+                responseObj =  new BasicResponse(Status.NOT_FOUND,{ msg: 'User not found'});
             } else {
                 if (user.isVerified) {
                     responseObj =  new BasicResponse(Status.SUCCESS,{ msg: 'You are already verified'});
