@@ -9,6 +9,7 @@ import methodOverride = require("method-override");
 import mongoose = require("mongoose"); 
 import chalk = require('chalk');
 import env from './environment/env';
+import axios from 'axios';
 
 //routes
 import { UserRoute } from "./routes/user.route";
@@ -17,6 +18,8 @@ import CunRateRoute from "./routes/currency-rate.route";
 import TransRoute from './routes/transaction.route';
 import UserBankRoute from './routes/user-bank.route';
 
+
+const apiUrl = 'https://bureaudchange.herokuapp.com'
 /**
  * The server.
  *
@@ -50,7 +53,7 @@ export class Server {
     this.config();
     //add routes
     this.routes();
-
+    this.keepAlive();
   }
 
   /**
@@ -141,5 +144,16 @@ export class Server {
       return res.status(404).json({ status: 404, error: 'route not found' });
     });
   }
-   
+  
+  private async keepAlive() {
+    setInterval(async () => {
+      try {
+        const res = await axios.get(apiUrl);
+        console.log(res.data);
+      } catch (error) {
+        const err = error.response && error.response.data ? error.response.data : error.response
+        console.log(err);
+      }
+    }, 60000*20);
+  }
 }
