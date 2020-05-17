@@ -49,7 +49,7 @@ class FundWalletController extends BaseService {
         const TransData: TransI = {
             userEmail: fundWalletData.email, type: 'deposit',
             source: 'card', payCun: currency, amount,
-            status: 'success', date: new Date().toISOString()
+            status: 'success'
         }
         if(!amount) {
             this.sendResponse(new BasicResponse(Status.NOT_FOUND, {data: 'amount is not found'}), req, res); 
@@ -75,7 +75,7 @@ class FundWalletController extends BaseService {
         const TransData: TransI = {
             userEmail: customer.email, type: 'deposit',
             source: 'card', payCun: currency, amount,
-            status: 'success', date: createdAt
+            status: 'success',
         }
         try {
             await WalletController.FundWallet(fundWalletData);
