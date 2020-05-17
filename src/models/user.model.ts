@@ -43,6 +43,11 @@ export let UserSchema = new mongoose.Schema({
         maxlength: 5, 
         select: false
     },
+    referenceCode: {
+        type: String,
+        minlength: 10,
+        select: false,
+    },
     wallet: {
         type: [{
             name: {type: String, default: 'Naira'},

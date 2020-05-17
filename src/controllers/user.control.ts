@@ -22,8 +22,9 @@ class UserController extends BaseService {
                 let responseObj = new BasicResponse(Status.CREATED, {msg});
                 const token = TokenService.sign({id: user._id}, '5h');                
                 EmailService.send('confirm', {...user.toJSON(), token, baseUrl: req.body.baseUrl})
+                ModelHelper.generateReference(user._id); 
                 this.sendResponse(responseObj, req, res);
-            } else {
+            } else { 
                 const msg = `This email already exists (${req.body.email})`
                 this.sendResponse(new BasicResponse(Status.FAILED_VALIDATION, {msg}), req, res);
             }

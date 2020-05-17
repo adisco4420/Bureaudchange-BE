@@ -30,22 +30,24 @@ class EmailService {
         const htmlOutput = mjml2html(`
         <mjml>
         <mj-body background-color="#ffffff" font-size="13px">
-          <mj-section background-color="#009FE3" vertical-align="top" padding-bottom="0px" padding-top="0">
+          <mj-section background-color="#E33491" vertical-align="top" padding-bottom="0px" padding-top="0">
             <mj-column vertical-align="top" width="100%">
               <mj-text align="center" color="#ffffff" font-size="40px"  font-family="open Sans Helvetica, Arial, sans-serif" padding-left="25px" padding-right="25px" padding-bottom="30px" padding-top="50px">
                 ${this.companyName}
               </mj-text>
             </mj-column>
           </mj-section>
-          <mj-section background-color="#009fe3" padding-bottom="20px" padding-top="20px">
+          <mj-section background-color="#E33491" padding-bottom="20px" padding-top="20px">
             <mj-column vertical-align="middle" width="100%">
-              <mj-text align="left" color="#ffffff" font-size="22px" font-family="open Sans Helvetica, Arial, sans-serif" padding-left="25px" padding-right="25px"><span style="color:#FEEB35">
-                Hello ${paylaod.firstName}</span><br /><br /> Welcome to ${this.companyName}.</mj-text>
+              <mj-text align="left" color="#ffffff"  font-size="22px" font-family="open Sans Helvetica, Arial, sans-serif" padding-left="25px" padding-right="25px">
+              <span font-weight="600" font-size="24px" style="color:#ffffff">Hello ${paylaod.firstName}</span><br /><br /> 
+                Welcome to ${this.companyName}.</mj-text>
               <mj-text align="left" color="#ffffff" font-size="15px" font-family="open Sans Helvetica, Arial, sans-serif" padding-left="25px" padding-right="25px">
                Thanks for joining ${this.companyName}, please confirm that your email address is correct to continue, 
                click the link below to get started
               </mj-text>
-              <mj-button align="left" href="${this.baseUrl}/auth/comfirm-email/${paylaod.token}" font-size="22px" font-weight="bold" background-color="#ffffff" border-radius="10px" color="#1AA0E1" font-family="open Sans Helvetica, Arial, sans-serif">Confirm Email</mj-button>
+              <mj-button align="left" href="${this.baseUrl}/auth/comfirm-email/${paylaod.token}" font-size="22px" font-weight="bold" 
+                background-color="#ffffff" border-radius="10px" color="#9B3791" font-family="open Sans Helvetica, Arial, sans-serif">Confirm Email</mj-button>
               <mj-text align="left" color="#ffffff" font-size="15px" font-family="open Sans Helvetica, Arial, sans-serif" padding-left="25px" padding-right="25px">Thanks, <br /> The ${this.companyName} Team</mj-text>
             </mj-column>
           </mj-section>
