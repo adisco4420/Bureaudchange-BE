@@ -53,7 +53,7 @@ class TransactionController extends BaseService {
     }
     async GetUserTrans(req: Request, res: Response) {
         try {
-            const userTrans = await TransModel.find({userEmail: req.user.email}).sort({date: -1});
+            const userTrans = await TransModel.find({userEmail: req.user}).sort({date: -1});
             this.sendResponse(new BasicResponse(Status.SUCCESS, { msg: 'User Transactions', data: userTrans}), req, res);
         } catch (error) {
             this.sendResponse(new BasicResponse(Status.ERROR, error), req, res);
