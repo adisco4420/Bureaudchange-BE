@@ -53,7 +53,7 @@ export class Server {
     this.config();
     //add routes
     this.routes();
-    this.keepAlive();
+    // this.keepAlive();
   }
 
   /**
