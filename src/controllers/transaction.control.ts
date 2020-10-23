@@ -1,11 +1,11 @@
-import { Status } from './../dtos/enums/statusenums';
+import { Status } from '../dtos/enums/statusenums';
 import { BaseService } from "../services/base.service";
 import { Request, Response } from "express";
 import { TransI } from '../interfaces/interfaces';
 import TransModel from '../models/transaction.model';
 import { BasicResponse } from '../dtos/outputs/basicresponse';
 import WalletSrv from '../services/wallet.service';
-import WalletController from '../controllers/wallet.control';
+import WalletController from './wallet.control';
 
 class TransactionController extends BaseService {
     Create(payload: TransI): Promise<any> {
@@ -53,7 +53,7 @@ class TransactionController extends BaseService {
     }
     async GetUserTrans(req: Request, res: Response) {
         try {
-            const userTrans = await TransModel.find({userEmail: req.user}).sort({date: -1});
+            const userTrans = await TransModel.find({userEmail: req.user.email}).sort({date: -1});
             this.sendResponse(new BasicResponse(Status.SUCCESS, { msg: 'User Transactions', data: userTrans}), req, res);
         } catch (error) {
             this.sendResponse(new BasicResponse(Status.ERROR, error), req, res);

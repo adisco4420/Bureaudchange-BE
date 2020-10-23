@@ -5,7 +5,7 @@ import { Request, Response } from "express";
 import env from '../environment/env';
 import WalletSrv from '../services/wallet.service';
 import WalletController from './wallet.control';
-import TransController from './transaction..control';
+import TransController from './transaction.control';
 import { TransI } from "../interfaces/interfaces";
 
 const stripe = require('stripe')(env.stripeTestKey);
