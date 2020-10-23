@@ -6,7 +6,7 @@ import { Request, Response } from "express";
 import UserModel from "../models/user.model";
 import WalletSrv from '../services/wallet.service';
 import { TransI } from "../interfaces/interfaces";
-import TransController from './transaction..control';
+import TransController from './transaction.control';
 
 class WalletController extends BaseService {
     public async WalletBalance(req: Request, res: Response) {

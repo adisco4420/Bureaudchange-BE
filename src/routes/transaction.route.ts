@@ -1,5 +1,5 @@
 import { Router , Request, Response} from "express";
-import TransController from '../controllers/transaction..control';
+import TransController from '../controllers/transaction.control';
 import AuthMidWare from '../middlewares/auth.midware';
 import AdminMidWare from '../middlewares/admin.midware';
 
